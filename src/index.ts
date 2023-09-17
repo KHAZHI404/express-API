@@ -15,16 +15,17 @@ let videos = [{id: '1', title: 'Name 1', author: 'Author 1'}, {id: '2', title: '
 
 
 app.get('/videos', (req: Request, res: Response) => {
-    res.send(videos)
+    res.status(200).send(videos)
 })
 app.post('/videos', (req: Request, res: Response) => {
     let title = req.body.title
     if (!title || !title.trim() || title.length > 40 || typeof title !== "string") {
         res.status(400).send({
             errorsMessages: [{
-                "message": "title",
-                "field": "errors in title"
-            }]
+                "message": "errors in title",
+                "field": "title"
+            }],
+            resultCode: 1
         })
         return
     }
@@ -39,28 +40,47 @@ app.post('/videos', (req: Request, res: Response) => {
 
     res.status(201).send(newVideo)
 })
-app.put('/videos:videoId', (req: Request, res: Response) => {
+app.get('/videos/:videoId', (req: Request, res: Response) => {
+    const id = req.params.videoId
+    const foundVideo = videos.find(v => v.id === id)
+    if (foundVideo) {
+        res.status(200).send(foundVideo)
+    } else {
+        res.status(404)
+    }
+})
+app.put('/videos/:videoId', (req: Request, res: Response) => {
     let title = req.body.title
     if (!title || !title.trim() || title.length > 40 || typeof title !== "string") {
         res.status(400).send({
             errorsMessages: [{
-                "message": "title",
-                "field": "errors in title"
-            }]
+                "message": "errors in title",
+                "field": "title"
+            }],
+            resultCode: 1
         })
         return
     }
 
     const id = req.params.videoId;
-    const video= videos.find(v => v.id === id)
-    if (video) {
-        video.title = title;
-        res.status(204).send(video)
+    const foundVideo= videos.find(v => v.id === id)
+    if (foundVideo) {
+        foundVideo.title = title;
+        res.status(204).send(foundVideo)
     } else {
         res.send(404)
     }
 
-
+})
+app.delete('/videos/:videoId', (req:Request, res:Response) => {
+    const id = req.params.videoId
+    const newVideos = videos.filter(v => v.id !== id)
+    if (newVideos.length < videos.length) {
+        videos = newVideos
+        res.send(204)
+    } else {
+        res.send(404)
+    }
 })
 
 
