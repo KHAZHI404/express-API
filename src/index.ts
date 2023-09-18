@@ -1,24 +1,27 @@
 import express, {Request, Response} from 'express'
 import bodyParser from 'body-parser'
-// import cors from 'CORS'
 
 const app = express()
 
-// const corsMiddleware = cors();
-// app.use(corsMiddleware)
 const jsonBodyMiddleware = bodyParser.json()
 app.use(jsonBodyMiddleware)
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 5000
 
 
 let videos = [{id: '1', title: 'Name 1', author: 'Author 1'}, {id: '2', title: 'Name 2', author: 'Author 2'}]
 
 
+app.delete('/', (req: Request, res: Response) => {
+    videos = []
+    res.send(204)
+})
 app.get('/videos', (req: Request, res: Response) => {
     res.status(200).send(videos)
 })
 app.post('/videos', (req: Request, res: Response) => {
     let title = req.body.title
+    let author = req.body.author
+
     if (!title || !title.trim() || title.length > 40 || typeof title !== "string") {
         res.status(400).send({
             errorsMessages: [{
@@ -29,11 +32,21 @@ app.post('/videos', (req: Request, res: Response) => {
         })
         return
     }
+    if (!author || !author.trim() || author.length > 40 || typeof author !== "string") {
+        res.status(400).send({
+            errorsMessages: [{
+                "message": "errors in author",
+                "field": "author"
+            }],
+            resultCode: 1
+        })
+        return
+    }
 
     const newVideo = {
         id: new Date().toISOString(),
         title: title,
-        author: 'Leonardo'
+        author: author
     }
 
     videos.push(newVideo)
