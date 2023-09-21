@@ -59,11 +59,12 @@ app.get('/videos/:videoId', (req: Request, res: Response) => {
     if (foundVideo) {
         res.status(200).send(foundVideo)
     } else {
-        res.status(404)
+        res.send(404)
     }
 })
 app.put('/videos/:videoId', (req: Request, res: Response) => {
     let title = req.body.title
+    let author = req.body.author
     if (!title || !title.trim() || title.length > 40 || typeof title !== "string") {
         res.status(400).send({
             errorsMessages: [{
@@ -75,10 +76,22 @@ app.put('/videos/:videoId', (req: Request, res: Response) => {
         return
     }
 
+    if (!author || !author.trim() || author.length > 20 || typeof author !== "string") {
+        res.status(400).send({
+            errorsMessages: [{
+                "message": "errors in author",
+                "field": "author"
+            }],
+            resultCode: 1
+        })
+        return
+    }
+
     const id = req.params.videoId;
     const foundVideo= videos.find(v => v.id === id)
     if (foundVideo) {
         foundVideo.title = title;
+        foundVideo.author = author
         res.status(204).send(foundVideo)
     } else {
         res.send(404)
