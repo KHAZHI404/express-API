@@ -1,7 +1,7 @@
 import express, {Request, Response} from 'express'
 import bodyParser from 'body-parser'
 
-const app = express()
+export const app = express()
 
 const jsonBodyMiddleware = bodyParser.json()
 app.use(jsonBodyMiddleware)
