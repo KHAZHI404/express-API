@@ -1,6 +1,7 @@
 import {Request, Response, Router} from "express";
 import { HTTP_STATUSES} from "../index";
 import {videos, videosRepository} from "../repositories/videos-repository";
+import * as http from "http";
 export const videosRouter = Router({})
 
 
@@ -37,7 +38,7 @@ videosRouter.post('/', (req: Request, res: Response) => {
     res.status(HTTP_STATUSES.CREATED_201).send(newVideo)
 })
 videosRouter.get('/:videoId', (req: Request, res: Response) => {
-    const foundVideo = videosRepository.getVideoById(+req.params.id)
+    const foundVideo = videosRepository.findVideoById(+req.params.id)
     if (foundVideo) {
         res.status(HTTP_STATUSES.OK_200).send(foundVideo)
     } else {
@@ -45,6 +46,7 @@ videosRouter.get('/:videoId', (req: Request, res: Response) => {
     }
 })
 videosRouter.put('/:videoId', (req: Request, res: Response) => {
+    let id = +req.params.id
     let title = req.body.title
     let author = req.body.author
     if (!title || !title.trim() || title.length > 40 || typeof title !== "string") {
@@ -69,23 +71,11 @@ videosRouter.put('/:videoId', (req: Request, res: Response) => {
         return
     }
 
-    const foundVideo= videos.find(v => v.id === +req.params.videoId)
-    if (foundVideo) {
-        foundVideo.title = title;
-        foundVideo.author = author
-        res.status(HTTP_STATUSES.CREATED_201).send(foundVideo)
-    } else {
-        res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-    }
+    const isUpdated = videosRepository.updateVideo(id, title, author)
+    isUpdated ? res.send(videosRepository.findVideoById(id)) : res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
 
 })
 videosRouter.delete('/:videoId', (req:Request, res:Response) => {
-    for (let i=0; i < videos.length; i++) {
-        if (videos[i].id === +req.params.videoId) {
-            videos.splice(i, 1);
-            res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
-            return
-        }
-    }
-    res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+    const isDeleted = videosRepository.deleteVideo(+req.params.videoId)
+    isDeleted ? res.sendStatus(HTTP_STATUSES.NO_CONTENT_204) : res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
 })

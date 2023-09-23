@@ -37,7 +37,7 @@ describe('test for /videos', () => {
         const createdVideo = createRespnce.body
 
         expect(createdVideo).toEqual({
-            id: expect.any(String),
+            id: expect.any(Number),
             title: 'something',
             author: 'sdgsdfg'
         })
