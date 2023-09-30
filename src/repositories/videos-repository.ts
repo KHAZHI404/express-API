@@ -1,6 +1,6 @@
-import {HTTP_STATUSES} from "../index";
+import {videos} from "../db/db";
+import {h01CreateVideoInputModel, h01UpdateVideoInputModel, h01Video} from "../types/types";
 
-export let videos = [{id: 1, title: 'Name 1', author: 'Author 1'}, {id: 2, title: 'Name 2', author: 'Author 2'}]
 
 export const videosRepository = {
     findVideos(title: string | null | undefined) {
@@ -10,7 +10,7 @@ export const videosRepository = {
         return videos
     },
 
-    createVideo(title: string, author: string) {
+    createVideo(title: string, author: string): h01CreateVideoInputModel {
         const newVideo = {
             id: +(new Date()),
             title: title,
@@ -24,7 +24,7 @@ export const videosRepository = {
         return videos.find(v => v.id === id)
     },
 
-    updateVideo(id: number, title: string, author: string) {
+    updateVideo(id: number, title: string, author: string): h01UpdateVideoInputModel {
         const video = videos.find(v => v.id === id)
         if (video) {
             video.title = title
