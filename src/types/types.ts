@@ -13,12 +13,12 @@ export type FieldError = {
 export type h01CreateVideoInputModel = {
     title: string
     author:	string
-    availableResolutions: h01Resulutions[]
+    availableResolutions: string
 }
 export type h01UpdateVideoInputModel = {
     title: string
     author:	string
-    availableResolutions: h01Resulutions[]
+    availableResolutions: string
     canBeDownloaded: boolean
     minAgeRestriction: number | null
     publicationDate: string

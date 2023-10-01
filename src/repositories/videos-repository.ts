@@ -10,11 +10,16 @@ export const videosRepository = {
         return videos
     },
 
-    createVideo(title: string, author: string): h01CreateVideoInputModel {
+    createVideo(title: string, author: string) {
         const newVideo = {
             id: +(new Date()),
             title: title,
-            author: author
+            author: author,
+            canBeDownloaded: true,
+            minAgeRestriction: 123,
+            createdAt: 'string',
+            publicationDate: 'string',
+            availableResolutions: 'P240',
         }
         videos.push(newVideo)
         return newVideo
@@ -24,7 +29,7 @@ export const videosRepository = {
         return videos.find(v => v.id === id)
     },
 
-    updateVideo(id: number, title: string, author: string): h01UpdateVideoInputModel {
+    updateVideo(id: number, title: string, author: string) {
         const video = videos.find(v => v.id === id)
         if (video) {
             video.title = title
