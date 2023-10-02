@@ -1,39 +1,44 @@
-import {NextFunction, Request, Response} from "express";
-import {body, validationResult} from "express-validator";
-import {FieldError} from "../types/types";
-import {HTTP_STATUSES} from "../index";
+import e, {NextFunction, Request, Response} from "express";
+import {body, ValidationError, validationResult} from "express-validator";
+import {FieldError} from "../types";
+import {HTTP_STATUSES} from "../setting";
 
-export const titleValidation = () => {
+export const validateVideos = () => [
     body('title')
         .isString()
         .trim()
-        .isLength({max: 40})
-        .withMessage('errors in title');
-
-
+        .isLength({max: 4})
+        .withMessage('errors in title'),
     body('author')
         .isString()
         .trim()
-        .isLength({max: 20})
+        .isLength({max: 2})
         .withMessage('errors in author')
-}
-
+]
 
 export const inputValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
-        const errorMesssage = errors.array({onlyFirstError: true}).map(error => errorsFormatter)
-        res.status(HTTP_STATUSES.BAD_REQUEST_400).send(errorMesssage)
+        const errorsMessages = errors
+            .array({onlyFirstError: true})
+            .map((error: ValidationError) => errorsFormatter(error))
+        res.status(HTTP_STATUSES.BAD_REQUEST_400).send({errorsMessages})
         return
     }
     next()
 }
 
-const errorsFormatter = (error: FieldError) => {
-    return {
-        message: error.message,
-        field: error.field,
+const errorsFormatter = (error: ValidationError) : FieldError => {
+    switch (error.type){
+        case "field":
+            return {
+                message: error.msg,
+                field: error.path,
+            }
+        default:
+            return {
+                message: error.msg,
+                field: 'unknown',
+            }
     }
-
-
 }

@@ -1,5 +1,4 @@
 import {videos} from "../db/db";
-import {h01CreateVideoInputModel, h01UpdateVideoInputModel, h01Video} from "../types/types";
 
 
 export const videosRepository = {
@@ -47,6 +46,10 @@ export const videosRepository = {
             }
         }
         return false
+    },
+
+    deleteAll() {
+        videos.splice(0, videos.length)
     }
 
 }

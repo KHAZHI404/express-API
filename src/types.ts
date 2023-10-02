@@ -1,8 +1,5 @@
 export type h01Resulutions = [ 'P144', 'P240', 'P360', 'P480', 'P720', 'P1080', 'P1440', 'P2160' ]
-
-
-
-
+//как сделать это типом?как тербуюется в домашке
 export type APIErrorResult = {
     errorsMessages: FieldError
 }
@@ -13,7 +10,7 @@ export type FieldError = {
 export type h01CreateVideoInputModel = {
     title: string
     author:	string
-    availableResolutions: string
+    availableResolutions?: string // это значит что тип не обязателен?
 }
 export type h01UpdateVideoInputModel = {
     title: string
