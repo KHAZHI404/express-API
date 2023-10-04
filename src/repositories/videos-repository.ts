@@ -1,4 +1,5 @@
 import {videos} from "../db/db";
+import {h01Video} from "../types";
 
 
 export const videosRepository = {
@@ -9,8 +10,8 @@ export const videosRepository = {
         return videos
     },
 
-    createVideo(title: string, author: string) {
-        const newVideo = {
+    createVideo(title: string, author: string)  {
+        const newVideo: h01Video = {
             id: +(new Date()),
             title: title,
             author: author,
@@ -24,12 +25,12 @@ export const videosRepository = {
         return newVideo
     },
 
-    findVideoById(id: number) {
+    findVideoById(id: number) :h01Video | undefined {
         return videos.find(v => v.id === id)
     },
 
-    updateVideo(id: number, title: string, author: string) {
-        const video = videos.find(v => v.id === id)
+    updateVideo(id: number, title: string, author: string, ) {
+        const video: h01Video | undefined = videos.find(v => v.id === id)
         if (video) {
             video.title = title
             video.author = author

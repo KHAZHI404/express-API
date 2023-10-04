@@ -7,12 +7,12 @@ export const validateVideos = () => [
     body('title')
         .isString()
         .trim()
-        .isLength({max: 4})
+        .isLength({min: 3, max: 40})
         .withMessage('errors in title'),
     body('author')
         .isString()
         .trim()
-        .isLength({max: 2})
+        .isLength({min: 3, max: 20})
         .withMessage('errors in author')
 ]
 

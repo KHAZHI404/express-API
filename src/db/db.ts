@@ -1,4 +1,4 @@
-import {h01Resulutions, h01Video} from "../types";
+import {h01Video, h02dbBlogViewModel} from "../types";
 
 
 export let videos: h01Video[] = [{
@@ -20,7 +20,11 @@ export let videos: h01Video[] = [{
         createdAt: '12.04.2022',
         publicationDate: '29.09.2023',
         availableResolutions: 'P144'
-    }
-]
+    }]
+export let db = {
+    blogs: [{id: '1', name: 'blog1', description: 'blog1', websiteUrl: 'blog1',},
+        {id: '2', name: 'blog2', description: 'blog2', websiteUrl: 'blog2',}],
+    posts: [],
+}
 
 
