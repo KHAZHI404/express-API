@@ -4,6 +4,7 @@ import {videosRouter} from "./routes/videos-router";
 import {videosRepository} from "./repositories/videos-repository";
 import {Request, Response} from "express";
 import {blogsRepository} from "./repositories/blogs-repository";
+import {blogsRouter} from "./routes/blogs-router";
 export const app = express()
 export const RouterPaths = {
     videos: '/videos',
@@ -12,6 +13,11 @@ export const RouterPaths = {
 
 app.use(bodyParser.json())
 app.use(RouterPaths.videos, videosRouter)
+app.use(RouterPaths.blogs, blogsRouter)
+
+
+
+
 app.delete('/testing/all-data', (req: Request, res: Response) => {
     videosRepository.deleteAll()
     blogsRepository.deleteAll()

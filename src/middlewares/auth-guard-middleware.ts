@@ -13,9 +13,4 @@ export const authGuardMiddleware = (req: Request, res: Response, next: NextFunct
     if(login !== 'admin' || password !== 'qwerty') return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     return next()
 
-    // authHeader.replace('Basic ', '').split(':', 2)
-    //
-    // if (authHeader[0] === 'admin' && authHeader[1] === 'qwerty') {
-    //     return next()
-    // }
 }

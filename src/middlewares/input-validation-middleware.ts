@@ -15,6 +15,23 @@ export const validateVideos = () => [
         .isLength({min: 3, max: 20})
         .withMessage('errors in author')
 ]
+export const validateBlogs = () => [
+    body('name')
+        .isString()
+        .trim()
+        .isLength({min: 3, max: 15})
+        .withMessage('errors in name'),
+    body('description')
+        .isString()
+        .trim()
+        .isLength({min: 3, max: 500})
+        .withMessage('errors in description'),
+    body('websiteUrl')
+        .isString()
+        .trim()
+        .isLength({min: 3, max: 100})
+        .withMessage('errors in websiteUrl')
+]
 
 export const inputValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req)

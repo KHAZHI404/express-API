@@ -1,5 +1,5 @@
-import {db, videos} from "../db/db";
-import {h01Video, h02dbBlogInputModel, h02dbBlogViewModel} from "../types";
+import {db} from "../db/db";
+import {h02dbBlogInputModel, h02dbBlogViewModel} from "../types";
 
 
 export const blogsRepository = {
@@ -7,38 +7,39 @@ export const blogsRepository = {
         if (name) {
             return db.blogs.filter(b => b.name.indexOf(name))
         }
-        return videos
+        return db.blogs
     },
 
     createBlog(name: string, description: string, websiteUrl: string): h02dbBlogInputModel  {
          const newBlog: h02dbBlogViewModel = {
-            id:	'12',
-            name:	'string',
-            description:	'string',
-            websiteUrl:	'string',
+            id:	new Date().toISOString(),
+            name,
+            description,
+            websiteUrl,
         }
         db.blogs.push(newBlog)
         return newBlog
     },
 
-    findBlogById(id: number) :h01Video | undefined {
-        return videos.find(v => v.id === id)
+    findBlogById(id: string) :h02dbBlogViewModel | undefined {
+        return db.blogs.find(b => b.id === id)
     },
 
-    updateBlog(id: number, title: string, author: string, ) {
-        const video: h01Video | undefined = videos.find(v => v.id === id)
-        if (video) {
-            video.title = title
-            video.author = author
+    updateBlog(id: string, name: string, description: string, websiteUrl: string) {
+        const blog: h02dbBlogViewModel | undefined = db.blogs.find(b => b.id === id)
+        if (blog) {
+            blog.name = name
+            blog.description = description
+            blog.websiteUrl = websiteUrl
             return true
         }
         return false
     },
 
-    deleteBlog(id: number) {
-        for (let i=0; i < videos.length; i++) {
-            if (videos[i].id === id) {
-                videos.splice(i, 1);
+    deleteBlog(id: string) {
+        for (let i=0; i < db.blogs.length; i++) {
+            if (db.blogs[i].id === id) {
+                db.blogs.splice(i, 1);
                 return true
             }
         }
