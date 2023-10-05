@@ -44,6 +44,7 @@ describe('test for /blogs', () => {
         const createResponce = await request(app)
             .post(RouterPaths.blogs)
             .send(data)
+            // .set(login: 'admin', password: 'qwerty')
             .expect(HTTP_STATUSES.CREATED_201)
 
         createdBlog = createResponce.body

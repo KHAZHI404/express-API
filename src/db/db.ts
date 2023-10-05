@@ -24,7 +24,18 @@ export let videos: h01Video[] = [{
 export let db = {
     blogs: [{id: '1', name: 'blog1', description: 'blog1', websiteUrl: 'blog1',},
         {id: '2', name: 'blog2', description: 'blog2', websiteUrl: 'blog2',}],
-    posts: [],
+    posts: [{id:'1',
+        title: 'post1',
+        shortDescription: 'post1',
+        content: 'post1',
+        blogId:	'post1',
+        blogName: 'post1'},
+        {id:'2',
+        title: 'post2',
+        shortDescription: 'post2',
+        content: 'post2',
+        blogId:	'post2',
+        blogName: 'post2'},],
 }
 
 
