@@ -1,46 +1,52 @@
 import {videos} from "../db/db";
-import {h01Video} from "../types";
+import {h01CreateVideoInputModel, h01UpdateVideoInputModel, h01Video} from "../models/videos-models/videos-models";
 
 
 export const videosRepository = {
-    findVideos(title: string | null | undefined) {
+
+    findVideos(title: string | null | undefined): h01Video[] {
         if (title) {
-            return videos.filter(v => v.title.indexOf(title))
+            return videos.filter(v => v.title.indexOf(title) > -1) //зачем этот минус 1?
         }
         return videos
     },
 
-    createVideo(title: string, author: string)  {
+    findVideoById(id: string): h01Video | undefined {
+        return videos.find(v => v.id === id)
+    },
+
+    createVideo(body: h01CreateVideoInputModel) {
         const newVideo: h01Video = {
-            id: +(new Date()),
-            title: title,
-            author: author,
+            id: new Date().toISOString(),
+            title: body.title,
+            author: body.author,
             canBeDownloaded: true,
-            minAgeRestriction: 123,
-            createdAt: 'string',
-            publicationDate: 'string',
-            availableResolutions: 'P240',
+            minAgeRestriction: null,
+            createdAt: new Date().toISOString(),
+            publicationDate: new Date().toISOString() + 1,
+            availableResolutions: 'P1440',
         }
         videos.push(newVideo)
         return newVideo
     },
 
-    findVideoById(id: number) :h01Video | undefined {
-        return videos.find(v => v.id === id)
-    },
 
-    updateVideo(id: number, title: string, author: string, ) {
+    updateVideo(id: string, body: h01UpdateVideoInputModel) {
         const video: h01Video | undefined = videos.find(v => v.id === id)
         if (video) {
-            video.title = title
-            video.author = author
+            video.title = body.title
+            video.author = body.author
+            video.availableResolutions = body.availableResolutions || video.availableResolutions
+            video.canBeDownloaded = body.canBeDownloaded || video.canBeDownloaded
+            video.minAgeRestriction = body.minAgeRestriction || video.minAgeRestriction
+            video.publicationDate = body.publicationDate || video.publicationDate
             return true
         }
         return false
     },
 
-    deleteVideo(id: number) {
-        for (let i=0; i < videos.length; i++) {
+    deleteVideo(id: string) {
+        for (let i = 0; i < videos.length; i++) {
             if (videos[i].id === id) {
                 videos.splice(i, 1);
                 return true

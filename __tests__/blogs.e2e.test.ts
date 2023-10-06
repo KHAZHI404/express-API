@@ -86,7 +86,7 @@ describe('test for /blogs', () => {
             .expect(HTTP_STATUSES.NOT_FOUND_404)
     });
     it(`shouldn update blog with correct input data`, async () => {
-        const data = {name: 'Title test', description: 'Author test',websiteUrl:'site'}
+        const data = {name: 'Title test', description: 'Author test', websiteUrl: 'site'}
 
         await request(app)
             .put(`${RouterPaths.blogs}/${createdBlog.id}`)

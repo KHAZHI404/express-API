@@ -1,4 +1,4 @@
-import e, {NextFunction, Request, Response} from "express";
+import {NextFunction, Request, Response} from "express";
 import {body, ValidationError, validationResult} from "express-validator";
 import {FieldError} from "../types";
 import {HTTP_STATUSES} from "../setting";
@@ -15,6 +15,9 @@ export const validateVideos = () => [
         .isLength({min: 3, max: 20})
         .withMessage('errors in author')
 ]
+const websiteUrlPattern = '^https://([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$'
+
+
 export const validateBlogs = () => [
     body('name')
         .isString()
@@ -27,6 +30,7 @@ export const validateBlogs = () => [
         .isLength({min: 3, max: 500})
         .withMessage('errors in description'),
     body('websiteUrl')
+        .matches(websiteUrlPattern)
         .isString()
         .trim()
         .isLength({min: 3, max: 100})
@@ -49,15 +53,20 @@ export const validatePosts = () => [
         .isLength({min: 3, max: 1000})
         .withMessage('errors in content'),
     body('blogId')
+        // .custom(isblogExist)
         .isString()
         .trim()
         .withMessage('errors in blogId'),
 ]
 
+// const isblogExist = (value: string) => {
+//     const blogIndex = db.blogs.findIndex(el => el.id === value)
+//     if (blogIndex === -1) throw new Error(errorsMessages.b)
+// }
 export const inputValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
-        const errorsMessages = errors
+        const errorsMessages: FieldError[] = errors
             .array({onlyFirstError: true})
             .map((error: ValidationError) => errorsFormatter(error))
         res.status(HTTP_STATUSES.BAD_REQUEST_400).send({errorsMessages})
@@ -66,8 +75,8 @@ export const inputValidationMiddleware = (req: Request, res: Response, next: Nex
     next()
 }
 
-const errorsFormatter = (error: ValidationError) : FieldError => {
-    switch (error.type){
+const errorsFormatter = (error: ValidationError): FieldError => {
+    switch (error.type) {
         case "field":
             return {
                 message: error.msg,

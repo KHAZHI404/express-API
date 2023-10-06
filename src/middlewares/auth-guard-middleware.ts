@@ -8,9 +8,9 @@ export const authGuardMiddleware = (req: Request, res: Response, next: NextFunct
         return
     }
     const [authType, authValue] = authHeader.split(' ')
-    if(authType !== 'Basic') return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+    if (authType !== 'Basic') return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     const [login, password] = atob(authValue).split(':')
-    if(login !== 'admin' || password !== 'qwerty') return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+    if (login !== 'admin' || password !== 'qwerty') return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     return next()
 
 }
