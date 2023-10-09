@@ -1,22 +1,23 @@
-import {db} from "../db/db";
+import {blogsCollection, db, postsCollection} from "../db/db";
 import {blogsRepository} from "./blogs-repository";
 import {h02dbPostInputModel, h02dbPostViewModel} from "../models/posts-models/posts-models";
+import {h02dbBlogViewModel} from "../models/blogs-models/blog-models";
 
 
 export const postsRepository = {
-    findPosts(title: string | null | undefined) {
-        if (title) {
-            return db.posts.filter(p => p.title.indexOf(title))
-        }
-        return db.posts
+
+    async findPosts(title: string | null | undefined): Promise<h02dbPostViewModel[]> {
+        return title ? postsCollection.find({title: {$regex: title}}).toArray()
+            : postsCollection.find().toArray()
     },
 
-    findPostById(id: string): h02dbPostViewModel | undefined {
-        return db.posts.find(b => b.id === id)
+    async findPostById(id: string): Promise<h02dbPostViewModel | null> {
+        const post: h02dbPostViewModel | null = await postsCollection.findOne({id: id})
+        return post ? post : null
     },
 
-    createPost(name: string, body: h02dbPostInputModel): h02dbPostInputModel | undefined {
-        const newPost = {
+    async createPost(name: string, body: h02dbPostInputModel): Promise<h02dbPostInputModel> {
+        const newPost: h02dbPostViewModel = {
             id: new Date().toISOString(),
             title: body.title,
             shortDescription: body.shortDescription,
@@ -24,36 +25,32 @@ export const postsRepository = {
             blogId: body.blogId,
             blogName: name,
         }
-        db.posts.push(newPost)
+        const result = await postsCollection.insertOne(newPost)
         return newPost
     },
 
-    updatePost(id: string, title: string, shortDescription: string, content: string, blogId: string) {
-        const post: h02dbPostViewModel | undefined = db.posts.find(b => b.id === id)
-        const blogExist = blogsRepository.findBlogById(blogId)
+    async updatePost(postId: string, blogId: string, body: h02dbPostInputModel) {
 
-        if (post) {
-            post.title = title
-            post.shortDescription = shortDescription
-            post.content = content
-            post.blogId = blogId
-            return true
-        }
-        return false
-    },
+        const result = await postsCollection.updateOne({id: postId}, {
+            $set: {
+                title: body.title,
+                shortDescription: body.shortDescription,
+                content: body.content,
+                blogId: blogId,
 
-    deletePost(id: string) {
-        for (let i = 0; i < db.posts.length; i++) {
-            if (db.posts[i].id === id) {
-                db.posts.splice(i, 1);
-                return true
             }
-        }
-        return false
+        })
+        return result.matchedCount === 1
     },
+
+    async deletePost(id: string) {
+        const result = await postsCollection.deleteOne({id: id})
+        return result.deletedCount === 1
+    },
+
 
     deleteAll() {
-        db.posts.splice(0, db.posts.length)
-    }
+        db.__posts.splice(0, db.__posts.length)
+    },
 
 }

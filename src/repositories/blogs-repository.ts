@@ -1,52 +1,48 @@
-import {db} from "../db/db";
+import {blogsCollection, db} from "../db/db";
 import {h02dbBlogInputModel, h02dbBlogViewModel} from "../models/blogs-models/blog-models";
 
 export const blogsRepository = {
-    findBlogs(name: string | null | undefined) {
-        if (name) {
-            return db.blogs.filter(b => b.name.indexOf(name))
-        }
-        return db.blogs
+
+    async findBlogs(name: string | null | undefined): Promise<h02dbBlogViewModel[]> {
+        return name ? blogsCollection.find({name: {$regex: name}}).toArray()
+            : blogsCollection.find().toArray()
     },
 
-    findBlogById(id: string): h02dbBlogViewModel | undefined {
-        return db.blogs.find(b => b.id === id)
+    async findBlogById(id: string): Promise<h02dbBlogViewModel | null> {
+        const blog: h02dbBlogViewModel | null = await blogsCollection.findOne({id: id})
+        return blog ? blog : null
     },
 
-    createBlog(body: h02dbBlogInputModel): h02dbBlogInputModel {
+    async createBlog(body: h02dbBlogInputModel): Promise<h02dbBlogInputModel> {
         const newBlog: h02dbBlogViewModel = {
             id: new Date().toISOString(),
             name: body.name,
             description: body.description,
             websiteUrl: body.websiteUrl,
         }
-        db.blogs.push(newBlog)
+        const result = await blogsCollection.insertOne(newBlog)
         return newBlog
     },
 
-    updateBlog(id: string, body: h02dbBlogInputModel) {
-        const blog: h02dbBlogViewModel | undefined = db.blogs.find(b => b.id === id)
-        if (blog) {
-            blog.name = body.name
-            blog.description = body.description
-            blog.websiteUrl = body.websiteUrl
-            return true
-        }
-        return false
+    async updateBlog(id: string, body: h02dbBlogInputModel): Promise<boolean> {
+
+        const result = await blogsCollection.updateOne({id: id}, {
+            $set: {
+                name: body.name,
+                description: body.description,
+                websiteUrl: body.websiteUrl,
+            }
+        })
+        return result.matchedCount === 1
     },
 
-    deleteBlog(id: string) {
-        for (let i = 0; i < db.blogs.length; i++) {
-            if (db.blogs[i].id === id) {
-                db.blogs.splice(i, 1);
-                return true
-            }
-        }
-        return false
+    async deleteBlog(id: string): Promise<boolean> {
+        const result = await blogsCollection.deleteOne({id: id})
+        return result.deletedCount === 1
     },
 
     deleteAll() {
-        db.blogs.splice(0, db.blogs.length)
+        db.__blogs.splice(0, db.__blogs.length)
     }
 
 }

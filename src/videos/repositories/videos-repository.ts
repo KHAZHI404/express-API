@@ -1,21 +1,21 @@
-import {videos} from "../db/db";
-import {h01CreateVideoInputModel, h01UpdateVideoInputModel, h01Video} from "../models/videos-models/videos-models";
+import {videos} from "../../db/db";
+import {h01CreateVideoInputModel, h01UpdateVideoInputModel, h01Video} from "../videos-models/videos-models";
 
 
 export const videosRepository = {
 
-    findVideos(title: string | null | undefined): h01Video[] {
+    async findVideos(title: string | null | undefined): Promise<h01Video[]> {
         if (title) {
             return videos.filter(v => v.title.indexOf(title) > -1) //зачем этот минус 1?
         }
         return videos
     },
 
-    findVideoById(id: string): h01Video | undefined {
+    async findVideoById(id: string): Promise<h01Video | undefined> {
         return videos.find(v => v.id === id)
     },
 
-    createVideo(body: h01CreateVideoInputModel) {
+    async createVideo(body: h01CreateVideoInputModel): Promise<h01Video> {
         const newVideo: h01Video = {
             id: new Date().toISOString(),
             title: body.title,
@@ -31,7 +31,7 @@ export const videosRepository = {
     },
 
 
-    updateVideo(id: string, body: h01UpdateVideoInputModel) {
+    async updateVideo(id: string, body: h01UpdateVideoInputModel): Promise<boolean> {
         const video: h01Video | undefined = videos.find(v => v.id === id)
         if (video) {
             video.title = body.title
@@ -45,7 +45,7 @@ export const videosRepository = {
         return false
     },
 
-    deleteVideo(id: string) {
+    async deleteVideo(id: string): Promise<boolean> {
         for (let i = 0; i < videos.length; i++) {
             if (videos[i].id === id) {
                 videos.splice(i, 1);
@@ -55,7 +55,7 @@ export const videosRepository = {
         return false
     },
 
-    deleteAll() {
+    async deleteAll(): Promise<void> {
         videos.splice(0, videos.length)
     }
 

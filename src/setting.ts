@@ -1,20 +1,20 @@
 import express from "express";
-import bodyParser from "body-parser";
-import {videosRouter} from "./routes/videos-router";
-import {videosRepository} from "./repositories/videos-repository";
+import {videosRouter} from "./videos/routes/videos-router";
+import {videosRepository} from "./videos/repositories/videos-repository";
 import {Request, Response} from "express";
 import {blogsRepository} from "./repositories/blogs-repository";
 import {blogsRouter} from "./routes/blogs-router";
 import {postsRouter} from "./routes/posts-router";
 import {postsRepository} from "./repositories/posts-repository";
-export const app = express()
 export const RouterPaths = {
     videos: '/videos',
     blogs: '/blogs',
     posts: '/posts'
 }
+export const app = express()
 
-app.use(bodyParser.json())
+const bodyParser = express.json()
+app.use(bodyParser)
 app.use(RouterPaths.videos, videosRouter)
 app.use(RouterPaths.blogs, blogsRouter)
 app.use(RouterPaths.posts, postsRouter)

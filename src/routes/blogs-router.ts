@@ -8,36 +8,35 @@ import {h02dbBlogInputModel, h02dbBlogViewModel} from "../models/blogs-models/bl
 export const blogsRouter = Router({})
 
 
-blogsRouter.get('/', (req: Request, res: Response) => {
-    const foundBlogs = blogsRepository.findBlogs(req.query.name?.toString())
+blogsRouter.get('/', async (req: Request, res: Response): Promise<void> => {
+    const foundBlogs: h02dbBlogViewModel[] = await blogsRepository.findBlogs(req.query.name?.toString())
     res.send(foundBlogs)
 })
 blogsRouter.post('/',
-    // authGuardMiddleware,
+    authGuardMiddleware,
     validateBlogs(),
     inputValidationMiddleware,
-    (req: Request, res: Response) => {
-        const newBlog: h02dbBlogInputModel = blogsRepository.createBlog(req.body)
+    async (req: Request, res: Response): Promise<void> => {
+        const newBlog: h02dbBlogInputModel = await blogsRepository.createBlog(req.body)
         res.status(HTTP_STATUSES.CREATED_201).send(newBlog)
     })
-blogsRouter.get('/:blogId', (req: Request, res: Response) => {
-    const foundBlog: h02dbBlogViewModel | undefined = blogsRepository.findBlogById(req.params.blogId)
+blogsRouter.get('/:blogId', async (req: Request, res: Response): Promise<void> => {
+    const foundBlog: h02dbBlogViewModel | null = await blogsRepository.findBlogById(req.params.blogId)
     foundBlog ? res.status(HTTP_STATUSES.OK_200).send(foundBlog) : res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-
 })
 blogsRouter.put('/:blogId',
-    // authGuardMiddleware,
+    authGuardMiddleware,
     validateBlogs(),
     inputValidationMiddleware,
-    (req: Request, res: Response) => {
+    async (req: Request, res: Response) => {
         const blogId = req.params.blogId
-        const isUpdated = blogsRepository.updateBlog(blogId, req.body)
+        const isUpdated = await blogsRepository.updateBlog(blogId, req.body)
         isUpdated ? res.send(blogsRepository.findBlogById(blogId)) : res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
 
     })
 blogsRouter.delete('/:blogId',
-    // authGuardMiddleware,
-    (req: Request, res: Response) => {
-        const isDeleted = blogsRepository.deleteBlog(req.params.blogId)
+    authGuardMiddleware,
+    async (req: Request, res: Response) => {
+        const isDeleted = await blogsRepository.deleteBlog(req.params.blogId)
         isDeleted ? res.sendStatus(HTTP_STATUSES.NO_CONTENT_204) : res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     })
