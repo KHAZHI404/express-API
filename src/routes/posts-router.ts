@@ -1,4 +1,4 @@
-import {raw, Request, Response, Router} from "express";
+import {Request, Response, Router} from "express";
 import {HTTP_STATUSES} from "../setting";
 import {inputValidationMiddleware, validatePosts} from '../middlewares/input-validation-middleware'
 import {postsRepository} from "../repositories/posts-repository";
@@ -35,7 +35,7 @@ postsRouter.put('/:postId',
     validatePosts(),
     inputValidationMiddleware,
     async (req: Request, res: Response): Promise<void> => {
-        const {name, description, websiteUrl, blogId} = req.body
+        const blogId = req.body
         const postId = req.params.postId
         const isUpdated = await postsRepository.updatePost(postId, blogId, req.body)
         const blogExist: h02dbBlogViewModel | null = await blogsRepository.findBlogById(blogId)

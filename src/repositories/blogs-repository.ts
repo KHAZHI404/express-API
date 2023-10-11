@@ -20,7 +20,7 @@ export const blogsRepository = {
             description: body.description,
             websiteUrl: body.websiteUrl,
         }
-        const result = await blogsCollection.insertOne(newBlog)
+        await blogsCollection.insertOne(newBlog)
         return newBlog
     },
 

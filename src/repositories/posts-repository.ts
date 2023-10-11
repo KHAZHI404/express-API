@@ -1,7 +1,5 @@
-import {blogsCollection, db, postsCollection} from "../db/db";
-import {blogsRepository} from "./blogs-repository";
+import {db, postsCollection} from "../db/db";
 import {h02dbPostInputModel, h02dbPostViewModel} from "../models/posts-models/posts-models";
-import {h02dbBlogViewModel} from "../models/blogs-models/blog-models";
 
 
 export const postsRepository = {
@@ -25,7 +23,7 @@ export const postsRepository = {
             blogId: body.blogId,
             blogName: name,
         }
-        const result = await postsCollection.insertOne(newPost)
+        await postsCollection.insertOne(newPost)
         return newPost
     },
 
