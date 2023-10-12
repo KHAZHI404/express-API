@@ -1,6 +1,6 @@
 import request from "supertest";
 import {app, HTTP_STATUSES, RouterPaths} from "../src/setting";
-import {h02dbBlogInputModel} from "../src/types";
+import {h02dbBlogInputModel} from "../src/models/blogs-models/blog-models";
 
 describe('test for /blogs', () => {
 
