@@ -4,6 +4,7 @@ import {inputValidationMiddleware, validateBlogs} from '../middlewares/input-val
 import {blogsService} from "../domain/blogs-service";
 import {authGuardMiddleware} from "../middlewares/auth-guard-middleware";
 import {h02dbBlogInputModel, h03BlogViewModel} from "../models/blogs-models/blog-models";
+import {postsService} from "../domain/posts-service";
 
 export const blogsRouter = Router({})
 
@@ -41,9 +42,11 @@ blogsRouter.delete('/:blogId',
         isDeleted ? res.sendStatus(HTTP_STATUSES.NO_CONTENT_204) : res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     })
 
-blogsRouter.get('/:blogId', async (req: Request, res: Response): Promise<void> => {
+blogsRouter.get('/:blogId/posts', async (req: Request, res: Response): Promise<void> => {
     const foundBlog: h03BlogViewModel | null = await blogsService.findBlogById(req.params.blogId)
     if (foundBlog) {
-        
+        const result = postsService.findPosts(req.query.title?.toString())
+        res.send(result).status(HTTP_STATUSES.OK_200)
     }
+    res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
 })

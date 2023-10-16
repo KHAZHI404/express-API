@@ -1,6 +1,4 @@
-import {postsCollection} from "../db/db";
 import {h02dbPostInputModel, h03PostViewModel} from "../models/posts-models/posts-models";
-import {blogsRepository} from "../repositories/blogs-repository";
 import {postsRepository} from "../repositories/posts-repository";
 
 
