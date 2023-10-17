@@ -23,3 +23,10 @@ export type Paginator<h03BlogViewModel> = {
     totalCount: number
     items:	h03BlogViewModel
 }
+export type _blogOutputModel = {
+    pagesCount: number
+    page: number
+    pageSize: number
+    totalCount: number
+    items:	h03BlogViewModel[]
+}
