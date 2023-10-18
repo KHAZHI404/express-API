@@ -5,6 +5,6 @@ export type FieldError = {
     message: string
     field: string
 }
-export type h04SortDirections = {
+export type SortDirections = {
     enum: "asc" | "desc"
 }

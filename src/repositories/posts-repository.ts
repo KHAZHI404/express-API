@@ -1,33 +1,54 @@
 import {postsCollection} from "../db/db";
-import {h02dbPostInputModel, h03PostViewModel} from "../models/posts-models/posts-models";
+import {PostDbModel, postMapper, PostViewModel, UpdatePostModel} from "../models/posts-models/posts-models";
+import {InsertOneResult, ObjectId, WithId} from "mongodb";
+import {Paginator} from "../models/blogs-models/blog-models";
 
 
 export const postsRepository = {
 
-    async findPosts(title: string | null | undefined): Promise<h03PostViewModel[]> {
-        return title ? postsCollection.find({title: {$regex: title}}).toArray()
-            : postsCollection.find().toArray()
+    async findPosts(page: number,
+                    pageSize: number,
+                    sortBy: string | 'createdAt',
+                    sortDirection: string): Promise<Paginator<PostViewModel>> {
+        const filter: any = {}
+
+        const sortOptions: any = []
+        sortOptions[sortBy] = sortDirection === 'asc' ? 1 : -1
+
+        const totalCount = await postsCollection.countDocuments(filter)
+        const pagesCount = Math.ceil(totalCount / pageSize)
+        const scip = (page - 1) * pageSize
+        const post = await postsCollection.find(filter).sort(sortOptions).limit(pageSize).skip(scip).toArray()
+
+        return {
+            pagesCount,
+            page,
+            pageSize,
+            totalCount,
+            items: post.map(post => postMapper(post))
+        }
+    },
+    async findPostById(id: string): Promise<PostViewModel | null> {
+        if(!ObjectId.isValid(id)) return null
+        const post: WithId<PostDbModel> | null = await postsCollection.findOne(
+            {_id: new ObjectId(id)})
+        return post ? postMapper(post) : null
+
     },
 
-    async findPostById(id: string): Promise<h03PostViewModel | null> {
-        const post: h03PostViewModel | null = await postsCollection.findOne({id: id})
-        return post ? post : null
+    async createPost(newPost: PostDbModel): Promise<PostViewModel> {
+        const result: InsertOneResult<PostDbModel> = await postsCollection.insertOne({...newPost})
+        return postMapper({_id: result.insertedId, ...newPost})
     },
 
-    async createPost(newPost: h03PostViewModel): Promise<h02dbPostInputModel> {
-
-        await postsCollection.insertOne(newPost)
-        return newPost
-    },
-
-    async updatePost(postId: string, blogId: string, body: h02dbPostInputModel) {
+    async updatePost(postId: string, body: UpdatePostModel) {
 
         const result = await postsCollection.updateOne({id: postId}, {
             $set: {
                 title: body.title,
                 shortDescription: body.shortDescription,
                 content: body.content,
-                blogId: blogId,
+                blogId: body.blogId,
 
             }
         })

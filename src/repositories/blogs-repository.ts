@@ -1,10 +1,14 @@
 import {blogsCollection, postsCollection} from "../db/db";
-import {h02dbBlogInputModel, h03BlogViewModel} from "../models/blogs-models/blog-models";
+import {BlogDbModel, blogMapper, BlogViewModel, Paginator, UpdateBlogModel} from "../models/blogs-models/blog-models";
+import {InsertOneResult, ObjectId, WithId} from "mongodb";
 
 export const blogsRepository = {
 
-    async findBlogs(page: number, pageSize: number, searchNameTerm: string | null,
-                    sortBy: string | 'createdAt', sortDirection: string) {
+    async findBlogs(page: number,
+                    pageSize: number,
+                    searchNameTerm: string | null,
+                    sortBy: string | 'createdAt',
+                    sortDirection: string): Promise<Paginator<BlogViewModel>> {
         const filter: any = {}
         if (searchNameTerm) {
             filter.name = {$regex: searchNameTerm, options: 'i'}
@@ -23,7 +27,7 @@ export const blogsRepository = {
             page,
             pageSize,
             totalCount,
-            items: blogs.map((blog) => (blog))
+            items: blogs.map(blog => blogMapper(blog))
         }
     },
 
@@ -37,7 +41,7 @@ export const blogsRepository = {
             const totalCount = await blogsCollection.countDocuments(filter)
             const pagesCount = Math.ceil(totalCount / pageSize)
             const scip = (page - 1) * pageSize
-            const posts = await postsCollection.find(filter).sort(sortOptions).limit(pageSize).toArray()
+            const posts = await postsCollection.find(filter).sort(sortOptions).limit(pageSize).skip(scip).toArray()
 
             return posts ? {
                 pagesCount,
@@ -51,27 +55,21 @@ export const blogsRepository = {
         }
     },
 
-    async findPostByBlogId(id: string) {
-        const foundPost = postsCollection.find(
-            {blogId: id},
-            {projection: {_id: false}})
-        return foundPost
+    async findBlogById(id: string): Promise<BlogViewModel | null> {
+        if(!ObjectId.isValid(id)) return null
+        const blog: WithId<BlogDbModel> | null = await blogsCollection.findOne(
+            {_id: new ObjectId(id)})
+        return blog ? blogMapper(blog) : null
     },
 
-    async findBlogById(id: string): Promise<h03BlogViewModel | null> {
-        const blog: h03BlogViewModel | null = await blogsCollection.findOne(
-            {id: id},
-            {projection: {_id: false}})
-        return blog
+    async createBlog(newBlog: BlogDbModel): Promise<BlogViewModel> {
+        const result: InsertOneResult<BlogDbModel> = await blogsCollection.insertOne({...newBlog})
+        return blogMapper({_id: result.insertedId, ...newBlog})
     },
 
-    async createBlog(newBlog: h03BlogViewModel): Promise<h03BlogViewModel> {
-        await blogsCollection.insertOne(newBlog)
-        return newBlog
-    },
+    async updateBlog(body: UpdateBlogModel ): Promise<boolean> {
 
-    async updateBlog(id: string, body: h02dbBlogInputModel): Promise<boolean> {
-        const result = await blogsCollection.updateOne({id: id}, {
+        const result = await blogsCollection.updateOne({id: body.id}, {
             $set: {
                 name: body.name,
                 description: body.description,

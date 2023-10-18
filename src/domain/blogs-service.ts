@@ -1,5 +1,9 @@
-import {h02dbBlogInputModel, h03BlogViewModel} from "../models/blogs-models/blog-models";
+import {
+    BlogDbModel, BlogViewModel, CreateBlogInputModel,
+    UpdateBlogModel
+} from "../models/blogs-models/blog-models";
 import {blogsRepository} from "../repositories/blogs-repository";
+
 
 export const blogsService = {
 
@@ -11,26 +15,24 @@ export const blogsService = {
         return await blogsRepository.getPostsForBlog(id, page, pageSize, sortBy, sortDirection)
     },
 
-    async findBlogById(id: string): Promise<h03BlogViewModel | null> {
+    async findBlogById(id: string): Promise<BlogViewModel | null> {
         return await blogsRepository.findBlogById(id)
     },
 
-    async createBlog(body: h02dbBlogInputModel): Promise<h02dbBlogInputModel> {
+    async createBlog(body: CreateBlogInputModel): Promise<BlogViewModel> {
 
-        const newBlog: h03BlogViewModel = {
-            id: new Date().toISOString(),
+        const newBlog: BlogDbModel = {
             name: body.name,
             description: body.description,
             websiteUrl: body.websiteUrl,
             createdAt: new Date().toISOString(),
             isMembership: false
         }
-        await blogsRepository.createBlog(newBlog)
-        return newBlog
+        return blogsRepository.createBlog(newBlog)
     },
 
-    async updateBlog(id: string, body: h02dbBlogInputModel): Promise<boolean> {
-        return await blogsRepository.updateBlog(id, body)
+    async updateBlog(body: UpdateBlogModel): Promise<boolean> {
+        return await blogsRepository.updateBlog(body)
     },
 
     async deleteBlog(id: string): Promise<boolean> {

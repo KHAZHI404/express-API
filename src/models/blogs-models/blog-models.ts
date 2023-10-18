@@ -1,32 +1,50 @@
-export type h02dbBlogInputModel = {
-    name: string
-    description: string
-    websiteUrl: string
-}
-export type h02dbBlogPostInputModel = {
-    title: string
-    shortDescription: string
-    content: string
-}
-export type h03BlogViewModel = {
-    id:	string
+import {WithId} from "mongodb";
+
+export type BlogDbModel = {
     name: string
     description: string
     websiteUrl: string
     createdAt: string
     isMembership: boolean
 }
-export type Paginator<h03BlogViewModel> = {
-    pagesCount: number
-    page: number
-    pageSize: number
-    totalCount: number
-    items:	h03BlogViewModel
+
+export type CreateBlogInputModel = {
+    name: string
+    description: string
+    websiteUrl: string
 }
-export type _blogOutputModel = {
+
+export type UpdateBlogModel = {
+    id: string
+    name: string
+    description: string
+    websiteUrl: string
+}
+
+export type BlogViewModel = {
+    id: string
+    name: string
+    description: string
+    websiteUrl: string
+    createdAt: string
+    isMembership: boolean
+}
+
+export type Paginator<BlogViewModel> = {
     pagesCount: number
     page: number
     pageSize: number
     totalCount: number
-    items:	h03BlogViewModel[]
+    items:	BlogViewModel[]
+}
+
+export const blogMapper = (blog: WithId<BlogDbModel>): BlogViewModel => {
+    return {
+        id: blog._id.toString(),
+        name: blog.name,
+        description: blog.description,
+        websiteUrl: blog.websiteUrl,
+        createdAt: blog.createdAt,
+        isMembership: blog.isMembership,
+    }
 }
