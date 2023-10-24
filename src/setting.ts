@@ -1,6 +1,4 @@
 import express from "express";
-import {Request, Response} from "express";
-import {blogsRepository} from "./repositories/blogs-repository";
 import {blogsRouter} from "./routes/blogs-router";
 import {postsRouter} from "./routes/posts-router";
 import {postsRepository} from "./repositories/posts-repository";
@@ -18,7 +16,6 @@ app.use(bodyParser)
 app.use(RouterPaths.blogs, blogsRouter)
 app.use(RouterPaths.posts, postsRouter)
 app.use(RouterPaths.testing, testingRouter)
-
 
 export const HTTP_STATUSES = {
     OK_200: 200,

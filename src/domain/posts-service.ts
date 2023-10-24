@@ -20,10 +20,6 @@ export const postsService = {
         return postsRepository.findPostById(id)
     },
 
-    async findPostByBlogId(id: string): Promise<PostViewModel | null> {
-        return postsRepository.findPostById(id)
-    },
-
     async createPost(inputData: CreatePostType): Promise<PostViewModel | null> {
         const blog: BlogViewModel | null = await blogsRepository.findBlogById(inputData.blogId)
         if (!blog) return null

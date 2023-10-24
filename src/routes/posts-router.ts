@@ -18,6 +18,10 @@ postsRouter.get('/', async (req: Request, res: Response): Promise<void> => {
     const foundPosts = await postsService.findPosts(page, pageSize, sortBy, sortDirection)
     res.send(foundPosts)
 })
+postsRouter.get('/:postId', async (req: Request, res: Response) => {
+    const foundPost: PostViewModel | null = await postsService.findPostById(req.params.postId)
+    foundPost ? res.status(HTTP_STATUSES.OK_200).send(foundPost) : res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+})
 postsRouter.post('/',
     authGuardMiddleware,
     validatePosts(),
@@ -26,10 +30,7 @@ postsRouter.post('/',
         const newPost = await postsService.createPost(req.body)
         newPost ? res.status(HTTP_STATUSES.CREATED_201).send(newPost) : res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     })
-postsRouter.get('/:postId', async (req: Request, res: Response) => {
-    const foundPost: PostViewModel | null = await postsService.findPostById(req.params.postId)
-    foundPost ? res.status(HTTP_STATUSES.OK_200).send(foundPost) : res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-})
+
 postsRouter.put('/:postId',
     authGuardMiddleware,
     validatePosts(),

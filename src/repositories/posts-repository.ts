@@ -28,6 +28,7 @@ export const postsRepository = {
             items: post.map(post => postMapper(post))
         }
     },
+
     async findPostById(id: string): Promise<PostViewModel | null> {
         if(!ObjectId.isValid(id)) return null
         const post: WithId<PostDbModel> | null = await postsCollection.findOne(

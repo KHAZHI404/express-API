@@ -3,7 +3,7 @@ import {HTTP_STATUSES} from "../setting";
 import {inputValidationMiddleware, validateBlogs} from '../middlewares/input-validation-middleware'
 import {blogsService} from "../domain/blogs-service";
 import {authGuardMiddleware} from "../middlewares/auth-guard-middleware";
-import {BlogViewModel, CreateBlogInputModel} from "../models/blogs-models/blog-models";
+import {BlogViewModel, CreateBlogInputModel, Paginator} from "../models/blogs-models/blog-models";
 import {postsService} from "../domain/posts-service";
 
 export const blogsRouter = Router({})
@@ -15,7 +15,7 @@ blogsRouter.get('/', async (req: Request, res: Response): Promise<void> => {
     const sortBy = req.query.sortBy ? req.query.sortBy.toString() : 'createdAt'
     const sortDirection = req.query.sortDirection === 'asc' ? 'asc' : 'desc'
 
-    const foundBlogs = await blogsService.findBlogs(page, pageSize, searchNameTerm, sortBy, sortDirection)
+    const foundBlogs: Paginator<BlogViewModel> = await blogsService.findBlogs(page, pageSize, searchNameTerm, sortBy, sortDirection)
     res.send(foundBlogs)
 })
 
@@ -70,6 +70,6 @@ blogsRouter.post('/:blogId/posts',
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
         const newPost: any = await postsService.createPost({blogId: req.params.blogId, ...req.body})
-        return  res.status(HTTP_STATUSES.CREATED_201).send(newPost)
+        return res.status(HTTP_STATUSES.CREATED_201).send(newPost)
     }
 )

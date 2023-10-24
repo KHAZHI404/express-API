@@ -1,4 +1,4 @@
-import {blogsCollection, postsCollection} from "../db/db";
+import {blogsCollection} from "../db/db";
 import {BlogDbModel, blogMapper, BlogViewModel, Paginator, UpdateBlogModel} from "../models/blogs-models/blog-models";
 import {InsertOneResult, ObjectId, WithId} from "mongodb";
 
@@ -31,29 +31,29 @@ export const blogsRepository = {
         }
     },
 
-    async getPostsForBlog(id: string, page: number, pageSize: number,
-                          sortBy: string | 'createdAt', sortDirection: string) {
-        try {
-            const sortOptions: any = []
-            sortOptions[sortBy] = sortDirection === 'asc' ? 1 : -1
-            const filter = {blogId: id}
-
-            const totalCount = await blogsCollection.countDocuments(filter)
-            const pagesCount = Math.ceil(totalCount / pageSize)
-            const scip = (page - 1) * pageSize
-            const posts = await postsCollection.find(filter).sort(sortOptions).limit(pageSize).skip(scip).toArray()
-
-            return posts ? {
-                pagesCount,
-                page,
-                pageSize,
-                totalCount,
-                items: posts.map((post) => (post))
-            } : null
-        } catch (e) {
-            return null
-        }
-    },
+    // async getPostsForBlog(id: string, page: number, pageSize: number,
+    //                       sortBy: string | 'createdAt', sortDirection: string) {
+    //     try {
+    //         const sortOptions: any = []
+    //         sortOptions[sortBy] = sortDirection === 'asc' ? 1 : -1
+    //         const filter = {blogId: id}
+    //
+    //         const totalCount = await blogsCollection.countDocuments(filter)
+    //         const pagesCount = Math.ceil(totalCount / pageSize)
+    //         const scip = (page - 1) * pageSize
+    //         const posts = await postsCollection.find(filter).sort(sortOptions).limit(pageSize).skip(scip).toArray()
+    //
+    //         return posts ? {
+    //             pagesCount,
+    //             page,
+    //             pageSize,
+    //             totalCount,
+    //             items: posts.map((post) => (post))
+    //         } : null
+    //     } catch (e) {
+    //         return null
+    //     }
+    // },
 
     async findBlogById(id: string): Promise<BlogViewModel | null> {
         if(!ObjectId.isValid(id)) return null

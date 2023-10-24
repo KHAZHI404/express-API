@@ -30,7 +30,7 @@ export type PostViewModel = {
     blogName: string
     createdAt: string
 }
-export type Paginator<h03dbPostViewModel> = {
+export type Paginator<PostViewModel> = {
     pagesCount: number
     page: number
     pageSize: number
