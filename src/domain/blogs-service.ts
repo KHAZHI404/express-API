@@ -1,7 +1,4 @@
-import {
-    BlogDbModel, BlogViewModel, CreateBlogInputModel,
-    UpdateBlogModel
-} from "../models/blogs-models/blog-models";
+import { BlogDbModel, BlogViewModel, CreateBlogInputModel, UpdateBlogModel } from "../models/blogs-models/blog-models";
 import {blogsRepository} from "../repositories/blogs-repository";
 
 
@@ -11,9 +8,9 @@ export const blogsService = {
         return await blogsRepository.findBlogs(page, pageSize, searchNameTerm, sortBy, sortDirection)
     },
 
-    async getPostsForBlog(id: string, page: number, pageSize: number, sortBy: string, sortDirection: 'asc' | 'desc') {
-        return await blogsRepository.getPostsForBlog(id, page, pageSize, sortBy, sortDirection)
-    },
+    // async getPostsForBlog(id: string, page: number, pageSize: number, sortBy: string, sortDirection: 'asc' | 'desc') {
+    //     return await blogsRepository.getPostsForBlog(id, page, pageSize, sortBy, sortDirection)
+    // },
 
     async findBlogById(id: string): Promise<BlogViewModel | null> {
         return await blogsRepository.findBlogById(id)

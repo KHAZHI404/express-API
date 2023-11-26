@@ -9,7 +9,7 @@ import {PostViewModel} from "../models/posts-models/posts-models";
 
 export const postsRouter = Router({})
 
-postsRouter.get('/', async (req: Request, res: Response): Promise<void> => {
+postsRouter.get('/', async (req: Request, res: Response) => {
     const page = req.query.pageNumber ? Number(req.query.pageNumber) : 1
     const pageSize = req.query.pageSize ? Number(req.query.pageSize) : 10
     const sortBy = req.query.sortBy ? req.query.sortBy.toString() : 'createdAt'
@@ -35,7 +35,7 @@ postsRouter.put('/:postId',
     authGuardMiddleware,
     validatePosts(),
     inputValidationMiddleware,
-    async (req: Request, res: Response): Promise<void> => {
+    async (req: Request, res: Response) => {
         const blogId = req.body
         const postId = req.params.postId
         const isUpdated = await postsService.updatePost(postId, req.body)

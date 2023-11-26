@@ -27,7 +27,7 @@ describe('test for /blogs', () => {
         await request(app)
             .post(RouterPaths.blogs)
             // .set('Authorization', 'Basic ${YWRtaW46cXdlcnR5}')
-            .set('Authorization': 'YWRtaW46cXdlcnR5')
+            //.set('Authorization': 'YWRtaW46cXdlcnR5')
             .send(data)
             .expect(HTTP_STATUSES.BAD_REQUEST_400)
 

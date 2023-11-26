@@ -50,19 +50,19 @@ blogsRouter.delete('/:blogId',
         isDeleted ? res.sendStatus(HTTP_STATUSES.NO_CONTENT_204) : res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     })
 
-blogsRouter.get('/:blogId/posts', async (req: Request, res: Response): Promise<void> => {
-    const foundBlog: BlogViewModel | null = await blogsService.findBlogById(req.params.blogId)
-    if (!foundBlog) {
-        res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-    }
-    const page = req.query.pageNumber ? Number(req.query.pageNumber) : 1
-    const pageSize = req.query.pageSize ? Number(req.query.pageSize) : 10
-    const sortBy = req.query.sortBy ? req.query.sortBy.toString() : 'createdAt'
-    const sortDirection = req.query.sortDirection === 'asc' ? 'asc' : 'desc'
-
-    const posts = await blogsService.getPostsForBlog(req.params.id, page, pageSize, sortBy, sortDirection)
-    res.send(posts)
-})
+// blogsRouter.get('/:blogId/posts', async (req: Request, res: Response): Promise<void> => {
+//     const foundBlog: BlogViewModel | null = await blogsService.findBlogById(req.params.blogId)
+//     if (!foundBlog) {
+//         res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+//     }
+//     const page = req.query.pageNumber ? Number(req.query.pageNumber) : 1
+//     const pageSize = req.query.pageSize ? Number(req.query.pageSize) : 10
+//     const sortBy = req.query.sortBy ? req.query.sortBy.toString() : 'createdAt'
+//     const sortDirection = req.query.sortDirection === 'asc' ? 'asc' : 'desc'
+//
+//     const posts = await blogsService.getPostsForBlog(req.params.id, page, pageSize, sortBy, sortDirection)
+//     res.send(posts)
+// })
 
 blogsRouter.post('/:blogId/posts',
     authGuardMiddleware,
