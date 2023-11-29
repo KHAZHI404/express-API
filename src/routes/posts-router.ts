@@ -41,11 +41,11 @@ postsRouter.put('/:postId',
         const isUpdated = await postsService.updatePost(postId, req.body)
         const blogExist: BlogViewModel | null = await blogsRepository.findBlogById(blogId)
         if (blogExist) {
-            isUpdated ? res.send(postsService.findPostById(postId)) : res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+            isUpdated ? res.status(HTTP_STATUSES.OK_200).send(postsService.findPostById(postId)) : res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
         } else {
             res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
         }
-    })
+    }) //put request dont work обновляется но неправильный http код
 postsRouter.delete('/:postId',
     authGuardMiddleware,
     async (req: Request, res: Response) => {

@@ -1,12 +1,15 @@
-import {Request, Response, Router} from "express";
+import express, {Request, Response, Router} from "express";
 import {HTTP_STATUSES} from "../setting";
 import {inputValidationMiddleware, validateBlogs} from '../middlewares/input-validation-middleware'
 import {blogsService} from "../domain/blogs-service";
 import {authGuardMiddleware} from "../middlewares/auth-guard-middleware";
-import {BlogViewModel, CreateBlogInputModel, Paginator} from "../models/blogs-models/blog-models";
+import {BlogDbModel, BlogViewModel, CreateBlogInputModel, Paginator} from "../models/blogs-models/blog-models";
 import {postsService} from "../domain/posts-service";
 
 export const blogsRouter = Router({})
+// export const getBlogsRouter = (db: BlogDbModel) => {
+//     const router = express.Router()
+// }
 
 blogsRouter.get('/', async (req: Request, res: Response): Promise<void> => {
     const page = req.query.pageNumber ? Number(req.query.pageNumber) : 1
@@ -39,7 +42,7 @@ blogsRouter.put('/:blogId',
     inputValidationMiddleware,
     async (req: Request, res: Response): Promise<void> => {
         const blogId = req.params.blogId
-        const isUpdated = await blogsService.updateBlog(req.body)
+        const isUpdated = await blogsService.updateBlog(blogId, req.body)
         isUpdated ? res.send(blogsService.findBlogById(blogId)) : res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     })
 

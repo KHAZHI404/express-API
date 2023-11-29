@@ -43,8 +43,9 @@ export const postsRepository = {
     },
 
     async updatePost(postId: string, body: UpdatePostModel) {
+        if(!ObjectId.isValid(postId)) return false
 
-        const result = await postsCollection.updateOne({id: postId}, {
+        const result = await postsCollection.updateOne({_id: new ObjectId(postId)}, {
             $set: {
                 title: body.title,
                 shortDescription: body.shortDescription,
@@ -57,7 +58,8 @@ export const postsRepository = {
     },
 
     async deletePost(id: string) {
-        const result = await postsCollection.deleteOne({id: id})
+        if(!ObjectId.isValid(id)) return false
+        const result = await postsCollection.deleteOne({_id: new ObjectId(id)})
         return result.deletedCount === 1
     },
 

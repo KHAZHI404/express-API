@@ -67,9 +67,9 @@ export const blogsRepository = {
         return blogMapper({_id: result.insertedId, ...newBlog})
     },
 
-    async updateBlog(body: UpdateBlogModel ): Promise<boolean> {
-
-        const result = await blogsCollection.updateOne({id: body.id}, {
+    async updateBlog(id: string, body: UpdateBlogModel ): Promise<boolean> {
+        if(!ObjectId.isValid(id)) return false
+        const result = await blogsCollection.updateOne({_id: new ObjectId(id)}, {
             $set: {
                 name: body.name,
                 description: body.description,
@@ -80,7 +80,8 @@ export const blogsRepository = {
     },
 
     async deleteBlog(id: string): Promise<boolean> {
-        const result = await blogsCollection.deleteOne({id: id})
+        if(!ObjectId.isValid(id)) return false
+        const result = await blogsCollection.deleteOne({_id: new ObjectId(id)})
         return result.deletedCount === 1
     },
 
