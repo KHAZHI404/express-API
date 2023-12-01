@@ -36,16 +36,22 @@ postsRouter.put('/:postId',
     validatePosts(),
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
-        const blogId = req.body
+        const blogId = req.body.blogId
         const postId = req.params.postId
-        const isUpdated = await postsService.updatePost(postId, req.body)
         const blogExist: BlogViewModel | null = await blogsRepository.findBlogById(blogId)
-        if (blogExist) {
-            isUpdated ? res.status(HTTP_STATUSES.OK_200).send(postsService.findPostById(postId)) : res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-        } else {
-            res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
+        const postExist = await postsService.findPostById(postId)
+
+        if (!blogExist) {
+            res.status(HTTP_STATUSES.NOT_FOUND_404).send("error blog")
+            return
         }
-    }) //put request dont work обновляется но неправильный http код
+        if (!postExist) {
+            res.status(HTTP_STATUSES.NOT_FOUND_404).send("error post")
+            return
+        }
+        await postsService.updatePost(postId, req.body)
+        res.status(HTTP_STATUSES.NO_CONTENT_204).send('No content')
+    })
 postsRouter.delete('/:postId',
     authGuardMiddleware,
     async (req: Request, res: Response) => {

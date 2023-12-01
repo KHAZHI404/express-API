@@ -3,21 +3,7 @@ import {body, ValidationError, validationResult} from "express-validator";
 import {FieldError} from "../types";
 import {HTTP_STATUSES} from "../setting";
 
-export const validateVideos = () => [
-    body('title')
-        .isString()
-        .trim()
-        .isLength({min: 3, max: 40})
-        .withMessage('errors in title'),
-    body('author')
-        .isString()
-        .trim()
-        .isLength({min: 3, max: 20})
-        .withMessage('errors in author')
-]
 const websiteUrlPattern = '^https://([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$'
-
-
 export const validateBlogs = () => [
     body('name')
         .isString()
@@ -53,7 +39,6 @@ export const validatePosts = () => [
         .isLength({min: 3, max: 1000})
         .withMessage('errors in content'),
     body('blogId')
-        // .custom(isblogExist)
         .isString()
         .trim()
         .withMessage('errors in blogId'),
