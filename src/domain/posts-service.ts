@@ -2,6 +2,7 @@ import {postsRepository} from "../repositories/posts-repository";
 import {BlogViewModel} from "../models/blogs-models/blog-models";
 import {blogsRepository} from "../repositories/blogs-repository";
 import {PostDbModel, PostViewModel, UpdatePostModel} from "../models/posts-models/posts-models";
+import {blogsQueryRepository} from "../query-repositories/blogs-query-repository";
 
 export type CreatePostType = {
     title: string,
@@ -12,16 +13,8 @@ export type CreatePostType = {
 
 export const postsService = {
 
-    async findPosts(page: number, pageSize: number, sortBy: string | 'createdAt', sortDirection: 'asc' | 'desc') {
-        return await postsRepository.findPosts(page, pageSize, sortBy, sortDirection)
-    },
-
-    async findPostById(id: string): Promise<PostViewModel | null> {
-        return postsRepository.findPostById(id)
-    },
-
     async createPost(inputData: CreatePostType): Promise<PostViewModel | null> {
-        const blog: BlogViewModel | null = await blogsRepository.findBlogById(inputData.blogId)
+        const blog: BlogViewModel | null = await blogsQueryRepository.findBlogById(inputData.blogId)
         if (!blog) return null
         const newPost: PostDbModel = {
             title: inputData.title,

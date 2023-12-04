@@ -123,26 +123,26 @@ describe('test for /blogs', () => {
             });
 
     it('should delete both blog', async () => {
-                    await request(app)
-                        .delete(`${RouterPaths.blogs}/${createdBlog.id}`)
-                        .auth('admin', 'qwerty')
-                        .expect(HTTP_STATUSES.NO_CONTENT_204)
+        await request(app)
+            .delete(`${RouterPaths.blogs}/${createdBlog.id}`)
+            .auth('admin', 'qwerty')
+            .expect(HTTP_STATUSES.NO_CONTENT_204)
 
-                    await request(app)
-                        .delete(`${RouterPaths.blogs}/${createdBlog.id}`)
-                        .auth('admin', 'qwerty')
-                        .expect(HTTP_STATUSES.NOT_FOUND_404)
+        await request(app)
+            .delete(`${RouterPaths.blogs}/${createdBlog.id}`)
+            .auth('admin', 'qwerty')
+            .expect(HTTP_STATUSES.NOT_FOUND_404)
 
-                    // await request(app)
-                    //     .get(RouterPaths.blogs)
-                    //     .expect(HTTP_STATUSES.OK_200,  {
-                    //         pagesCount: 0,
-                    //         age: 1,
-                    //         pageSize: 10,
-                    //         totalCount: 0,
-                    //         items: []
-                    //     })
-                })
+        await request(app)
+            .get(RouterPaths.blogs)
+            .expect(HTTP_STATUSES.OK_200, {
+                pagesCount: 0,
+                page: 1,
+                pageSize: 10,
+                totalCount: 0,
+                items: []
+            })
+    })
 
     afterAll(done => {
         done()

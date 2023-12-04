@@ -90,7 +90,7 @@ describe('test for /posts', () => {
 
 
         // await request(app)
-        //     .get(`${RouterPaths.blogs}/${createdPost.id}`)
+        //     .get(`${RouterPaths.blogs}/${createdPost.Id}`)
         //     .expect(HTTP_STATUSES.OK_200, createdPost)
 
     });
@@ -157,6 +157,8 @@ describe('test for /posts', () => {
                     totalCount: 0,
                     items: []
                 })
+
+
         })
 
     afterAll(done => {
