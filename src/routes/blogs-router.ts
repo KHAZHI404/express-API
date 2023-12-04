@@ -58,20 +58,18 @@ blogsRouter.get('/:blogId/posts', async (req: Request, res: Response): Promise<v
         res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
         return
     }
-    const page = req.query.pageNumber ? Number(req.query.pageNumber) : 1
+    const pageNumber = req.query.pageNumber ? Number(req.query.pageNumber) : 1
     const pageSize = req.query.pageSize ? Number(req.query.pageSize) : 10
     const sortBy = req.query.sortBy ? req.query.sortBy.toString() : 'createdAt'
     const sortDirection = req.query.sortDirection === 'asc' ? 'asc' : 'desc'
 
-    const posts = await blogsQueryRepository.getPostsForBlog(req.params.id, page, pageSize, sortBy, sortDirection)
+    const posts = await blogsQueryRepository.getPostsForBlog(req.params.blogId, pageNumber, pageSize, sortBy, sortDirection)
     console.log(posts, 'its post')
     if (!posts) {
         res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
         return
     }
     res.send(posts)
-    // const foundPosts = await postsService.findPosts(page, pageSize, sortBy, sortDirection)
-    // res.send(foundPosts)
 })
 
 blogsRouter.post('/:blogId/posts',
