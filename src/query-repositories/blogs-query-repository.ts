@@ -37,21 +37,13 @@ export const blogsQueryRepository = {
         }
     },
 
-    async getPostsForBlog(id: string, // как вернуть посты именно одного блога а не все?
+    async getPostsForBlog(id: string,
                           pageNumber: number,
                           pageSize: number,
-                          sortBy: string | 'createdAt',
+                          sortBy: string,
                           sortDirection: string) {
         try {
-            let someId;
-            try {
-                 someId = new ObjectId(id)
-                console.log(someId, "some id")
-            } catch (e) {
-                return 'first try'
-             }
-            const blog = await this.findBlogById(id)
-            if (!ObjectId.isValid(id)) throw new Error('id not ObjectId')
+            if (!ObjectId.isValid(id)) return null
             const sortOptions: any = []
             sortOptions[sortBy] = sortDirection === 'asc' ? 1 : -1
             const filter = {blogId: id}

@@ -64,7 +64,6 @@ blogsRouter.get('/:blogId/posts', async (req: Request, res: Response): Promise<v
     const sortDirection = req.query.sortDirection === 'asc' ? 'asc' : 'desc'
 
     const posts = await blogsQueryRepository.getPostsForBlog(req.params.blogId, pageNumber, pageSize, sortBy, sortDirection)
-    console.log(posts, 'its post')
     if (!posts) {
         res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
         return

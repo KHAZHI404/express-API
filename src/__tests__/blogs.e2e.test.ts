@@ -142,7 +142,11 @@ describe('test for /blogs', () => {
                 totalCount: 0,
                 items: []
             })
-    })
+    });
+
+    // it('should create post width blog Id', async () => {
+    //     await request(app)
+    // });
 
     afterAll(done => {
         done()

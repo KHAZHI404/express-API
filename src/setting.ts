@@ -1,7 +1,6 @@
 import express from "express";
 import {blogsRouter} from "./routes/blogs-router";
 import {postsRouter} from "./routes/posts-router";
-import {postsRepository} from "./repositories/posts-repository";
 import {testingRouter} from "./routes/testing-router";
 
 export const RouterPaths = {
