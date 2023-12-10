@@ -3,7 +3,7 @@ import {HTTP_STATUSES} from "../setting";
 import {inputValidationMiddleware, validateBlogs, validatePostsInBlog} from '../middlewares/input-validation-middleware'
 import {blogsService} from "../domain/blogs-service";
 import {authGuardMiddleware} from "../middlewares/auth-guard-middleware";
-import {BlogViewModel, CreateBlogInputModel, Paginator} from "../models/blogs-models/blog-models";
+import {BlogViewModel, Paginator} from "../models/blogs-models/blog-models";
 import {postsService} from "../domain/posts-service";
 import {blogsQueryRepository} from "../query-repositories/blogs-query-repository";
 
@@ -13,11 +13,13 @@ export const blogsRouter = Router({})
 blogsRouter.get('/', async (req: Request, res: Response): Promise<void> => {
     const page = req.query.pageNumber ? Number(req.query.pageNumber) : 1
     const pageSize = req.query.pageSize ? Number(req.query.pageSize) : 10
-    const searchNameTerm = req.query.searchNameTerm ? req.query.searchNameTerm.toString() : null
     const sortBy = req.query.sortBy ? req.query.sortBy.toString() : 'createdAt'
     const sortDirection = req.query.sortDirection === 'asc' ? 'asc' : 'desc'
 
-    const foundBlogs: Paginator<BlogViewModel> = await blogsQueryRepository.findBlogs(page, pageSize, searchNameTerm, sortBy, sortDirection)
+    const searchNameTerm = req.query.searchNameTerm ? req.query.searchNameTerm.toString() : null
+
+    const foundBlogs: Paginator<BlogViewModel> = await blogsQueryRepository.findBlogs(page, pageSize,
+         sortBy, sortDirection, searchNameTerm)
     res.send(foundBlogs)
 })
 
@@ -31,7 +33,7 @@ blogsRouter.post('/',
     validateBlogs(),
     inputValidationMiddleware,
     async (req: Request, res: Response): Promise<void> => {
-        const newBlog: CreateBlogInputModel = await blogsService.createBlog(req.body)
+        const newBlog = await blogsService.createBlog(req.body)
         res.status(HTTP_STATUSES.CREATED_201).send(newBlog)
     })
 
@@ -42,14 +44,16 @@ blogsRouter.put('/:blogId',
     async (req: Request, res: Response): Promise<void> => {
         const blogId = req.params.blogId
         const isUpdated = await blogsService.updateBlog(blogId, req.body)
-        isUpdated ? res.send(blogsQueryRepository.findBlogById(blogId)) : res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+        isUpdated ? res.send(blogsQueryRepository.findBlogById(blogId)) :
+            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     })
 
 blogsRouter.delete('/:blogId',
     authGuardMiddleware,
     async (req: Request, res: Response) => {
         const isDeleted = await blogsService.deleteBlog(req.params.blogId)
-        isDeleted ? res.sendStatus(HTTP_STATUSES.NO_CONTENT_204) : res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+        isDeleted ? res.sendStatus(HTTP_STATUSES.NO_CONTENT_204) :
+            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     })
 
 blogsRouter.get('/:blogId/posts', async (req: Request, res: Response): Promise<void> => {

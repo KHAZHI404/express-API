@@ -7,9 +7,9 @@ export const blogsQueryRepository = {
 
     async findBlogs(page: number,
                     pageSize: number,
-                    searchNameTerm: string | null,
                     sortBy: string | 'createdAt',
-                    sortDirection: string): Promise<Paginator<BlogViewModel>> {
+                    sortDirection: string,
+                    searchNameTerm: string | null,): Promise<Paginator<BlogViewModel>> {
         const filter: any = {}
         if (searchNameTerm) {
             filter.name = {$regex: searchNameTerm, $options: 'i'}

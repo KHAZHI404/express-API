@@ -1,16 +1,15 @@
-import {Router} from "express";
+import {Request, Response, Router} from "express";
 import {usersService} from "../domain/users-service";
-
+import {HTTP_STATUSES} from "../setting";
+import {inputValidationMiddleware, validateAuthorization} from "../middlewares/input-validation-middleware";
 
 export const authRouter = Router()
 
-authRouter.post('/login',
-    async (req: Request, res: Response) => {
-    const checkResult = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
-        // if (checkResult.resultCode === 0) {
-        //     res.status(HTTP_STATUSES.CREATED_201).send(checkResult.data)
-        // } else {
-        //     res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
-        // }
-}
-    )
+authRouter.post('/auth/login',
+    validateAuthorization(),
+    inputValidationMiddleware,
+    async (req: Request, res: Response): Promise<void>  => {
+    const correctData = await usersService.checkCredentials(req.body)
+        correctData ? res.sendStatus(HTTP_STATUSES.NO_CONTENT_204) :
+            res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+})

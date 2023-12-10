@@ -5,6 +5,7 @@ import {blogsRepository} from "../repositories/blogs-repository";
 export const blogsService = {
 
     async createBlog(body: CreateBlogInputModel): Promise<BlogViewModel> {
+
         const newBlog: BlogDbModel = {
             name: body.name,
             description: body.description,

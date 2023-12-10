@@ -61,10 +61,31 @@ export const validatePostsInBlog = () => [
         .withMessage('errors in content')
 
 ]
-// const isblogExist = (value: string) => {
-//     const blogIndex = db.blogs.findIndex(el => el.id === value)
-//     if (blogIndex === -1) throw new Error(errorsMessages.b)
-// }
+export const validateUsers = () => [
+    body('id')
+        .isString()
+        .trim()
+        .withMessage('errors in id'),
+    body('login')
+        .isString()
+        .trim()
+        .withMessage('errors in login'),
+    body('email')
+        .isString()
+        .trim()
+        .withMessage('errors in email'),
+]
+export const validateAuthorization = () => [
+    body('loginOrEmail')
+        .isString()
+        .trim()
+        .withMessage('errors in loginOrEmail'),
+    body('password')
+        .isString()
+        .trim()
+        .withMessage('errors in password'),
+]
+
 export const inputValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
