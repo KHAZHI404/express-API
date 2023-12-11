@@ -1,3 +1,6 @@
+import {WithId} from "mongodb";
+import {UserDbModel} from "../models/users-models/users-models";
+
 export type APIErrorResult = {
     errorsMessages: FieldError
 }

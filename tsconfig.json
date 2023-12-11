@@ -109,5 +109,8 @@
   "include": ["src/**/*"],
   "exclude": ["node_modules", "**/*.test.ts",
     "src/__tests__/*"
-  ]
+  ],
+//tsconfig.json
+  "files": ["index.d.ts"] //path (e.g.: "src/types/index.d.ts")
+
 }

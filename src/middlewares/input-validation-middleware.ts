@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from "express";
 import {body, ValidationError, validationResult} from "express-validator";
-import {FieldError} from "../types";
+import {FieldError} from "../types/types";
 import {HTTP_STATUSES} from "../setting";
 
 const websiteUrlPattern = '^https://([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$'
