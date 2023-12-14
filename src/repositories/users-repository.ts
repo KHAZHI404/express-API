@@ -1,5 +1,5 @@
 import {UserDbModel, userMapper, UserViewModel} from "../models/users-models/users-models";
-import {usersCollection} from "../db/db";
+import {postsCollection, usersCollection} from "../db/db";
 import {InsertOneResult, ObjectId, WithId} from "mongodb";
 
 
@@ -25,7 +25,11 @@ export const usersRepository = {
     async findByLoginOrEmail(loginOrEmail: string): Promise<WithId<UserDbModel> | null> {
         return await usersCollection.findOne({ $or: [ { email: loginOrEmail },
                 { userName: loginOrEmail } ] } )
-    }
+    },
+
+    async deleteAll() {
+        const result = await usersCollection.deleteMany({})
+    },
 
 
 }

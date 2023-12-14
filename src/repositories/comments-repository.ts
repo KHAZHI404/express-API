@@ -1,5 +1,5 @@
 import {ObjectId} from "mongodb";
-import {blogsCollection, commentsCollection} from "../db/db";
+import {blogsCollection, commentsCollection, postsCollection} from "../db/db";
 
 
 export const commentsRepository = {
@@ -23,6 +23,10 @@ export const commentsRepository = {
         if(!ObjectId.isValid(id)) return false
         const result = await commentsCollection.deleteOne({_id: new ObjectId(id)})
         return result.deletedCount === 1
+    },
+
+    async deleteAll() {
+        const result = await commentsCollection.deleteMany({})
     },
 
 }
