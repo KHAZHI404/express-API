@@ -107,10 +107,13 @@
     "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "**/*.test.ts",
-    "src/__tests__/*"
+  "exclude": [
+    "node_modules",
+    "**/*.test.ts",
+    "src/__tests__/*",
+    "src/types/index.d.ts"
   ],
 //tsconfig.json
-  "files": ["index.d.ts"] //path (e.g.: "src/types/index.d.ts")
+//  "files": ["index.d.ts"], //path (e.g.: "src/types/index.d.ts")
 
 }

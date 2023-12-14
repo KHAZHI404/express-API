@@ -1,6 +1,5 @@
 import {NextFunction, Request, Response} from "express";
 import {HTTP_STATUSES} from "../setting";
-import {ObjectId} from "mongodb";
 
 export const authGuardMiddleware = (req: Request, res: Response, next: NextFunction) => {
     let authHeader = req.headers.authorization

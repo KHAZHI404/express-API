@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt-ts'
+import bcrypt from 'bcrypt'
 import {CreateUserInputModel, LoginInputModel, UserDbModel, UserViewModel} from "../models/users-models/users-models";
 import {usersRepository} from "../repositories/users-repository";
 import {ObjectId, WithId} from "mongodb";

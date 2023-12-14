@@ -1,3 +1,4 @@
+import {WithId} from "mongodb";
 
 
 export type CommentsInputModel = {
@@ -14,4 +15,20 @@ export type CommentDbModel = {
     commentatorInfo: CommentatorInfo
     createdAt: string
 }
-
+export type CommentViewModel = {
+    id: string
+    content: CommentsInputModel
+    commentatorInfo: CommentatorInfo
+    createdAt: string
+}
+export const commentMapper = (comment: WithId<CommentDbModel>): CommentViewModel => {
+    return {
+        id: comment._id.toString(),
+        content: comment.content,
+        commentatorInfo: {
+            userId: comment.commentatorInfo.userId,
+            userLogin: comment.commentatorInfo.userLogin,
+        },
+        createdAt: comment.createdAt
+    }
+}

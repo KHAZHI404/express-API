@@ -23,7 +23,7 @@ usersRouter.get('/', async (req: Request, res: Response) => {
     return res.send(foundUsers)
 })
 usersRouter.post('/',
-    authGuardMiddleware,
+    // authGuardMiddleware,
     validateUsers(),
     inputValidationMiddleware,
     async (req: Request, res: Response): Promise<void> => {
@@ -32,7 +32,7 @@ usersRouter.post('/',
 })
 
 usersRouter.delete('/id',
-    authGuardMiddleware,
+    // authGuardMiddleware,
     async (req: Request, res: Response) => {
     const isDeleted = await usersService.deleteUser(req.params.id)
         isDeleted ? res.sendStatus(HTTP_STATUSES.NO_CONTENT_204) :
