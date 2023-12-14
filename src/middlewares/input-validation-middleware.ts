@@ -85,6 +85,13 @@ export const validateAuthorization = () => [
         .trim()
         .withMessage('errors in password'),
 ]
+export const validateComments = () => [
+    body('content')
+        .isString()
+        .trim()
+        .isLength({min: 20, max: 300})
+        .withMessage('errors in loginOrEmail'),
+]
 
 export const inputValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req)
