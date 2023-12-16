@@ -5,41 +5,36 @@ import {blogsService} from "../domain/blogs-service";
 import {BlogViewModel, Paginator} from "../models/blogs-models/blog-models";
 import {postsService} from "../domain/posts-service";
 import {blogsQueryRepository} from "../query-repositories/blogs-query-repository";
-import {validateBlogs} from "../models/blogs-models/blog-validate";
-import {validatePostsInBlog} from "../models/posts-models/posts-validate";
+import {validateBlogs, validatePostsInBlog} from "../models/blogs-models/blog-validate";
 import {basicAuth} from "../middlewares/auth-middleware";
+import {getPageOptions} from "../types/types";
 
 export const blogsRouter = Router({})
 
-
-blogsRouter.get('/', async (req: Request, res: Response): Promise<void> => {
-    const page = req.query.pageNumber ? Number(req.query.pageNumber) : 1
-    const pageSize = req.query.pageSize ? Number(req.query.pageSize) : 10
-    const sortBy = req.query.sortBy ? req.query.sortBy.toString() : 'createdAt'
-    const sortDirection = req.query.sortDirection === 'asc' ? 'asc' : 'desc'
-
+blogsRouter.get('/',
+    async (req: Request, res: Response): Promise<void> => {
+    const { pageNumber, pageSize, sortBy, sortDirection } = getPageOptions(req.query);
     const searchNameTerm = req.query.searchNameTerm ? req.query.searchNameTerm.toString() : null
 
-    const foundBlogs: Paginator<BlogViewModel> = await blogsQueryRepository.findBlogs(page, pageSize,
+    const foundBlogs: Paginator<BlogViewModel> = await blogsQueryRepository.findBlogs(pageNumber, pageSize,
          sortBy, sortDirection, searchNameTerm)
     res.send(foundBlogs)
 })
 
-blogsRouter.get('/:blogId', async (req: Request, res: Response): Promise<void> => {
+blogsRouter.get('/:blogId',
+    async (req: Request, res: Response): Promise<void> => {
     const foundBlog: BlogViewModel | null = await blogsQueryRepository.findBlogById(req.params.blogId)
     foundBlog ? res.status(HTTP_STATUSES.OK_200).send(foundBlog) : res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
 })
 
-blogsRouter.get('/:blogId/posts', async (req: Request, res: Response): Promise<void> => {
+blogsRouter.get('/:blogId/posts',
+    async (req: Request, res: Response): Promise<void> => {
     const foundBlog: BlogViewModel | null = await blogsQueryRepository.findBlogById(req.params.blogId)
     if (!foundBlog) {
         res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
         return
     }
-    const pageNumber = req.query.pageNumber ? Number(req.query.pageNumber) : 1
-    const pageSize = req.query.pageSize ? Number(req.query.pageSize) : 10
-    const sortBy = req.query.sortBy ? req.query.sortBy.toString() : 'createdAt'
-    const sortDirection = req.query.sortDirection === 'asc' ? 'asc' : 'desc'
+    const { pageNumber, pageSize, sortBy, sortDirection } = getPageOptions(req.query);
 
     const posts = await blogsQueryRepository.getPostsForBlog(req.params.blogId, pageNumber, pageSize, sortBy, sortDirection)
     if (!posts) {
@@ -63,7 +58,7 @@ blogsRouter.post('/:blogId/posts',
     validatePostsInBlog(),
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
-        const newPost: any = await postsService.createPost({blogId: req.params.blogId, ...req.body})
+        const newPost = await postsService.createPost({blogId: req.params.blogId, ...req.body})
         if (!newPost) {
             return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
         }

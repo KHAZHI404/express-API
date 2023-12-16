@@ -2,6 +2,7 @@ import {NextFunction, Response, Request} from "express";
 import {HTTP_STATUSES} from "../setting";
 import {jwtService} from "../application/jwt-service";
 import {usersService} from "../domain/users-service";
+import {UserViewModel} from "../models/users-models/users-models";
 
 
 export const basicAuth = (req: Request, res: Response, next: NextFunction) => {
@@ -29,10 +30,10 @@ export const bearerAuth = async (req: Request, res: Response, next: NextFunction
     const token = auth.split(' ')[1]  //bearer fasdfasdfasdf
 
     const userId = await jwtService.getUserIdByToken(token)
-    const user = await usersService.findUserById(userId)
+    const user: UserViewModel | null = await usersService.findUserById(userId)
     if (user) {
         req.user = user
-        return  next()
+        return next()
     }
     res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
 }

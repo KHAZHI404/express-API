@@ -1,8 +1,14 @@
-import {ObjectId} from "mongodb";
+import {InsertOneResult, ObjectId} from "mongodb";
 import {commentsCollection} from "../db/db";
+import {CommentDbModel, commentMapper, CommentViewModel} from "../models/comments-model/comments-models";
 
 
 export const commentsRepository = {
+
+    async createComment(newComment: CommentDbModel): Promise<CommentViewModel> {
+        const result: InsertOneResult<CommentDbModel> = await commentsCollection.insertOne({...newComment})
+        return commentMapper({_id: result.insertedId, ...newComment})
+    },
 
     async updateComment(id: string, body: any): Promise<any> {
         if(!ObjectId.isValid(id)) return false
@@ -26,7 +32,7 @@ export const commentsRepository = {
     },
 
     async deleteAll() {
-        const result = await commentsCollection.deleteMany({})
+        return  await commentsCollection.deleteMany({})
     },
 
 }

@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from "express";
-import {body, ValidationError, validationResult} from "express-validator";
+import {ValidationError, validationResult} from "express-validator";
 import {FieldError} from "../types/types";
 import {HTTP_STATUSES} from "../setting";
 

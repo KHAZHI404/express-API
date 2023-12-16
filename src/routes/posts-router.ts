@@ -8,16 +8,16 @@ import {postsQueryRepository} from "../query-repositories/posts-query-repository
 import {blogsQueryRepository} from "../query-repositories/blogs-query-repository";
 import {basicAuth, bearerAuth} from "../middlewares/auth-middleware";
 import {validatePosts} from "../models/posts-models/posts-validate";
+import {getPageOptions} from "../types/types";
+import {commentsQueryRepository} from "../query-repositories/comments-query-repository";
+import {commentsService} from "../domain/comments-service";
 
 export const postsRouter = Router({})
 
 postsRouter.get('/', async (req: Request, res: Response) => {
-    const page = req.query.pageNumber ? Number(req.query.pageNumber) : 1
-    const pageSize = req.query.pageSize ? Number(req.query.pageSize) : 10
-    const sortBy = req.query.sortBy ? req.query.sortBy.toString() : 'createdAt'
-    const sortDirection = req.query.sortDirection === 'asc' ? 'asc' : 'desc'
+    const { pageNumber, pageSize, sortBy, sortDirection } = getPageOptions(req.query);
 
-    const foundPosts = await postsQueryRepository.findPosts(page, pageSize, sortBy, sortDirection)
+    const foundPosts = await postsQueryRepository.findPosts(pageNumber, pageSize, sortBy, sortDirection)
     res.send(foundPosts)
 })
 
@@ -27,15 +27,34 @@ postsRouter.get('/:postId', async (req: Request, res: Response) => {
 })
 
 postsRouter.get('/:postId/comments',
-    async (req: Request, res: Response) => {
-    //some code
-})
+    async (req: Request, res: Response): Promise<void> => {
+        const foundPost: PostViewModel | null = await postsQueryRepository.findPostById(req.params.postId)
+        if (!foundPost) {
+            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+            return
+        }
+        const { pageNumber, pageSize, sortBy, sortDirection } = getPageOptions(req.query);
+
+        const comments = await commentsQueryRepository.getCommentsForPost(req.params.blogId, pageNumber, pageSize, sortBy, sortDirection)
+        if (!comments) {
+            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+            return
+        }
+        res.send(comments)
+    })
 
 postsRouter.post('/:postId/comments',
     bearerAuth,
+    inputValidationMiddleware,
     async (req: Request, res: Response) => {
-    //some code
-})
+
+        const newComment = await commentsService.createComment({postId: req.params.postId, ...req.body})
+        if (!newComment) {
+            return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+        }
+        return res.status(HTTP_STATUSES.CREATED_201).send(newComment)
+    }
+)
 
 postsRouter.post('/',
     basicAuth,

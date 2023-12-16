@@ -10,8 +10,6 @@ import {validateComments} from "../models/comments-model/comments-validate";
 export const commentsRouter = Router({})
 
 commentsRouter.get('/:commentId',
-    validateComments(),
-    inputValidationMiddleware,
     async (req: Request, res: Response) => {
     const foundComment: CommentViewModel | null = await commentsQueryRepository.getCommentById(req.params.commentId)
     foundComment ? res.status(HTTP_STATUSES.OK_200).send(foundComment) :

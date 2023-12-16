@@ -32,7 +32,7 @@ export const postsRepository = {
     },
 
     async deleteAll() {
-        const result = await postsCollection.deleteMany({})
+        return  await postsCollection.deleteMany({})
     },
 
 }

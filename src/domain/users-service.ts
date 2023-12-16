@@ -7,11 +7,9 @@ import {LoginInputModel} from "../models/auth-models/auth-models";
 
 export const usersService = {
 
-    async createUser(body: CreateUserInputModel): Promise<UserViewModel> { //тут в видосе нужен юзерДБ тайп, зачем непонятно
+    async createUser(body: CreateUserInputModel): Promise<UserViewModel> {
 
-        // const passwordSalt = await bcrypt.genSalt(10)
         const passwordHash = await bcrypt.hash(body.password, 10)
-
 
         const newUser: UserDbModel = {
             login: body.login,
@@ -36,10 +34,6 @@ export const usersService = {
         }
         return null
     },
-
-    // async _generateHash(password: string, salt: string) {
-    //     return await bcrypt.hash(password, salt)
-    // },
 
     async findUserById(userId: ObjectId | null) {
         const user = await usersRepository.findUserById(userId!)

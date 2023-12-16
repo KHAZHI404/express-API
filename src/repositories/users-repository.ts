@@ -34,7 +34,7 @@ export const usersRepository = {
     },
 
     async deleteAll() {
-        const result = await usersCollection.deleteMany({})
+        return  usersCollection.deleteMany({})
     },
 
 

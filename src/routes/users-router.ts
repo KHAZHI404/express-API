@@ -5,6 +5,7 @@ import {usersQueryRepository} from "../query-repositories/users-query-repository
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 import {validateUsers} from "../models/users-models/users-validate";
 import {basicAuth} from "../middlewares/auth-middleware";
+import {getPageOptions} from "../types/types";
 
 
 export const usersRouter = Router({})
@@ -12,18 +13,14 @@ export const usersRouter = Router({})
 usersRouter.get('/',
     basicAuth,
     async (req: Request, res: Response) => {
-    const page = req.query.pageNumber ? Number(req.query.pageNumber) : 1
-    const pageSize = req.query.pageSize ? Number(req.query.pageSize) : 10
-    const sortBy = req.query.sortBy ? req.query.sortBy.toString() : 'createdAt'
-    const sortDirection = req.query.sortDirection === 'asc' ? 'asc' : 'desc'
-
-    const searchLoginTerm = req.query.searchLoginTerm ? req.query.searchLoginTerm.toString() : null
-    const searchEmailTerm = req.query.searchEmailTerm ? req.query.searchEmailTerm.toString() : null
+        const { pageNumber, pageSize, sortBy, sortDirection } = getPageOptions(req.query);
+        const searchLoginTerm = req.query.searchLoginTerm ? req.query.searchLoginTerm.toString() : null
+        const searchEmailTerm = req.query.searchEmailTerm ? req.query.searchEmailTerm.toString() : null
 
 
-    const foundUsers = await usersQueryRepository.findUsers(page, pageSize,
+        const foundUsers = await usersQueryRepository.findUsers(pageNumber, pageSize,
         sortBy, sortDirection, searchLoginTerm, searchEmailTerm)
-    return res.send(foundUsers)
+        return res.send(foundUsers)
 })
 
 usersRouter.post('/',

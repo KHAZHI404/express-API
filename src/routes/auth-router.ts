@@ -25,6 +25,7 @@ authRouter.post('/login',
         authRouter.get('/me' ,
             bearerAuth,
             async (req: Request, res: Response) => {
-                //some code
+                // const currentUser = usersService.findUserById()
+                //что сделать чтобы он вернул current User
         })
 })
