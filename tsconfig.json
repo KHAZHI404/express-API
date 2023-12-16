@@ -111,9 +111,10 @@
     "node_modules",
     "**/*.test.ts",
     "src/__tests__/*",
-    "src/types/index.d.ts"
   ],
-//tsconfig.json
-//  "files": ["index.d.ts"], //path (e.g.: "src/types/index.d.ts")
+
+  "files": [
+    "src/types/index.d.ts"
+  ]
 
 }

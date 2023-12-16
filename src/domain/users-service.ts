@@ -1,13 +1,14 @@
 import bcrypt from 'bcrypt'
-import {CreateUserInputModel, LoginInputModel, UserDbModel, UserViewModel} from "../models/users-models/users-models";
+import {CreateUserInputModel, UserDbModel, userMapper, UserViewModel} from "../models/users-models/users-models";
 import {usersRepository} from "../repositories/users-repository";
 import {ObjectId, WithId} from "mongodb";
+import {LoginInputModel} from "../models/login-models/login-models";
 import {usersCollection} from "../db/db";
 
 
 export const usersService = {
 
-    async createUser(body: CreateUserInputModel): Promise<UserViewModel> {
+    async createUser(body: CreateUserInputModel): Promise<UserViewModel> { //тут в видосе нужен юзерДБ тайп, зачем непонятно
 
         const passwordSalt = await bcrypt.genSalt(10)
         const passwordHash = await this._generateHash(body.password, passwordSalt)
@@ -24,22 +25,27 @@ export const usersService = {
     },
 
     async deleteUser(id: string): Promise<boolean> {
-        if(!ObjectId.isValid(id)) return false
-        const result = await usersCollection.deleteOne({_id: new ObjectId(id)})
-        return result.deletedCount === 1
+        return usersRepository.deleteUser(id)
     },
 
     async checkCredentials(body: LoginInputModel) {
         const user: WithId<UserDbModel> | null = await usersRepository.findByLoginOrEmail(body.loginOrEmail)
-        if (!user) return false
-
-        const passwordSalt = await bcrypt.genSalt(10)
-        const passwordHash = await this._generateHash(body.password, passwordSalt)
-
-        return user.password !== passwordHash
+        if (!user) return null
+        const compare = await bcrypt.compare(body.password, user.password)
+        if (compare) {
+            return user
+        }
+        return null
     },
 
     async _generateHash(password: string, salt: string) {
         return await bcrypt.hash(password, salt)
     },
+
+    async findUserById(userId: ObjectId | null) {
+        const user = await usersRepository.findUserById(userId!)
+        if (!user) return null
+        return userMapper(user)
+
+    }
 }

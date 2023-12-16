@@ -73,6 +73,8 @@ export const validateUsers = () => [
     body('email')
         .isString()
         .trim()
+        // .isEmail(websiteUrlPattern)
+        .matches(websiteUrlPattern) // Проверяем email на паттерн
         .withMessage('errors in email'),
 ]
 export const validateAuthorization = () => [
@@ -90,7 +92,7 @@ export const validateComments = () => [
         .isString()
         .trim()
         .isLength({min: 20, max: 300})
-        .withMessage('errors in loginOrEmail'),
+        .withMessage('errors in content'),
 ]
 
 export const inputValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {

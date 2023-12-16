@@ -27,6 +27,12 @@ export const usersRepository = {
                 { userName: loginOrEmail } ] } )
     },
 
+    async deleteUser(id: string): Promise<boolean> {
+        if(!ObjectId.isValid(id)) return false
+        const result = await usersCollection.deleteOne({_id: new ObjectId(id)})
+        return result.deletedCount === 1
+    },
+
     async deleteAll() {
         const result = await usersCollection.deleteMany({})
     },

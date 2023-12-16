@@ -1,10 +1,5 @@
 import {WithId} from "mongodb";
 
-export type LoginInputModel = {
-    loginOrEmail: string
-    password: string
-}
-
 export type UserDbModel = {
     login: string
     email: string
