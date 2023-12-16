@@ -1,5 +1,5 @@
 import {UserDbModel, userMapper, UserViewModel} from "../models/users-models/users-models";
-import {postsCollection, usersCollection} from "../db/db";
+import {usersCollection} from "../db/db";
 import {InsertOneResult, ObjectId, WithId} from "mongodb";
 
 

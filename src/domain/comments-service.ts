@@ -1,5 +1,3 @@
-import {UpdateBlogModel} from "../models/blogs-models/blog-models";
-import {blogsRepository} from "../repositories/blogs-repository";
 import {commentsRepository} from "../repositories/comments-repository";
 import {CommentDbModel} from "../models/comments-model/comments-models";
 

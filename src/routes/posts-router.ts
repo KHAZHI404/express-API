@@ -1,12 +1,13 @@
 import {Request, Response, Router} from "express";
 import {HTTP_STATUSES} from "../setting";
-import {inputValidationMiddleware, validatePosts} from '../middlewares/input-validation-middleware'
-import {authGuardMiddleware} from "../middlewares/auth-guard-middleware";
+import {inputValidationMiddleware} from '../middlewares/input-validation-middleware'
 import {BlogViewModel} from "../models/blogs-models/blog-models";
 import {postsService} from "../domain/posts-service";
 import {PostViewModel} from "../models/posts-models/posts-models";
 import {postsQueryRepository} from "../query-repositories/posts-query-repository";
 import {blogsQueryRepository} from "../query-repositories/blogs-query-repository";
+import {basicAuth, bearerAuth} from "../middlewares/auth-middleware";
+import {validatePosts} from "../models/posts-models/posts-validate";
 
 export const postsRouter = Router({})
 
@@ -19,12 +20,25 @@ postsRouter.get('/', async (req: Request, res: Response) => {
     const foundPosts = await postsQueryRepository.findPosts(page, pageSize, sortBy, sortDirection)
     res.send(foundPosts)
 })
+
 postsRouter.get('/:postId', async (req: Request, res: Response) => {
     const foundPost: PostViewModel | null = await postsQueryRepository.findPostById(req.params.postId)
     foundPost ? res.status(HTTP_STATUSES.OK_200).send(foundPost) : res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
 })
+
+postsRouter.get('/:postId/comments',
+    async (req: Request, res: Response) => {
+    //some code
+})
+
+postsRouter.post('/:postId/comments',
+    bearerAuth,
+    async (req: Request, res: Response) => {
+    //some code
+})
+
 postsRouter.post('/',
-    authGuardMiddleware,
+    basicAuth,
     validatePosts(),
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
@@ -33,7 +47,7 @@ postsRouter.post('/',
     })
 
 postsRouter.put('/:postId',
-    authGuardMiddleware,
+    basicAuth,
     validatePosts(),
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
@@ -53,10 +67,10 @@ postsRouter.put('/:postId',
         await postsService.updatePost(postId, req.body)
         res.status(HTTP_STATUSES.NO_CONTENT_204).send('No content')
     })
+
 postsRouter.delete('/:postId',
-    authGuardMiddleware,
+    basicAuth,
     async (req: Request, res: Response) => {
         const isDeleted = await postsService.deletePost(req.params.postId)
         isDeleted ? res.sendStatus(HTTP_STATUSES.NO_CONTENT_204) : res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     })
-

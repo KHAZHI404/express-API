@@ -1,4 +1,4 @@
-import { usersCollection} from "../db/db";
+import {usersCollection} from "../db/db";
 import {userMapper} from "../models/users-models/users-models";
 
 

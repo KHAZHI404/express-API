@@ -4,6 +4,7 @@ import {postsRouter} from "./routes/posts-router";
 import {testingRouter} from "./routes/testing-router";
 import {usersRouter} from "./routes/users-router";
 import {commentsRouter} from "./routes/comments-router";
+import {authRouter} from "./routes/auth-router";
 
 export const RouterPaths = {
     blogs: '/blogs',
@@ -11,6 +12,7 @@ export const RouterPaths = {
     testing: '/testing',
     users: '/users',
     comments: '/comments',
+    auth: '/auth'
 }
 export const app = express()
 
@@ -21,6 +23,7 @@ app.use(RouterPaths.posts, postsRouter)
 app.use(RouterPaths.testing, testingRouter)
 app.use(RouterPaths.users, usersRouter)
 app.use(RouterPaths.comments, commentsRouter)
+app.use(RouterPaths.auth, authRouter)
 
 export const HTTP_STATUSES = {
     OK_200: 200,

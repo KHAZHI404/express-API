@@ -1,5 +1,5 @@
 import {ObjectId} from "mongodb";
-import {blogsCollection, commentsCollection, postsCollection} from "../db/db";
+import {commentsCollection} from "../db/db";
 
 
 export const commentsRepository = {

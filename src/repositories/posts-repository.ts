@@ -1,7 +1,6 @@
 import {postsCollection} from "../db/db";
 import {PostDbModel, postMapper, PostViewModel, UpdatePostModel} from "../models/posts-models/posts-models";
-import {InsertOneResult, ObjectId, WithId} from "mongodb";
-import {Paginator} from "../models/blogs-models/blog-models";
+import {InsertOneResult, ObjectId} from "mongodb";
 
 
 export const postsRepository = {

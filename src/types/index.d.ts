@@ -1,4 +1,3 @@
-//index.d.ts
 import {UserViewModel} from "../models/users-models/users-models";
 
 declare global {

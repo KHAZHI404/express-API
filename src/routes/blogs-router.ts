@@ -1,11 +1,13 @@
 import {Request, Response, Router} from "express";
 import {HTTP_STATUSES} from "../setting";
-import {inputValidationMiddleware, validateBlogs, validatePostsInBlog} from '../middlewares/input-validation-middleware'
+import {inputValidationMiddleware} from '../middlewares/input-validation-middleware'
 import {blogsService} from "../domain/blogs-service";
-import {authGuardMiddleware} from "../middlewares/auth-guard-middleware";
 import {BlogViewModel, Paginator} from "../models/blogs-models/blog-models";
 import {postsService} from "../domain/posts-service";
 import {blogsQueryRepository} from "../query-repositories/blogs-query-repository";
+import {validateBlogs} from "../models/blogs-models/blog-validate";
+import {validatePostsInBlog} from "../models/posts-models/posts-validate";
+import {basicAuth} from "../middlewares/auth-middleware";
 
 export const blogsRouter = Router({})
 
@@ -28,34 +30,6 @@ blogsRouter.get('/:blogId', async (req: Request, res: Response): Promise<void> =
     foundBlog ? res.status(HTTP_STATUSES.OK_200).send(foundBlog) : res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
 })
 
-blogsRouter.post('/',
-    authGuardMiddleware,
-    validateBlogs(),
-    inputValidationMiddleware,
-    async (req: Request, res: Response): Promise<void> => {
-        const newBlog = await blogsService.createBlog(req.body)
-        res.status(HTTP_STATUSES.CREATED_201).send(newBlog)
-    })
-
-blogsRouter.put('/:blogId',
-    authGuardMiddleware,
-    validateBlogs(),
-    inputValidationMiddleware,
-    async (req: Request, res: Response): Promise<void> => {
-        const blogId = req.params.blogId
-        const isUpdated = await blogsService.updateBlog(blogId, req.body)
-        isUpdated ? res.send(blogsQueryRepository.findBlogById(blogId)) :
-            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-    })
-
-blogsRouter.delete('/:blogId',
-    authGuardMiddleware,
-    async (req: Request, res: Response) => {
-        const isDeleted = await blogsService.deleteBlog(req.params.blogId)
-        isDeleted ? res.sendStatus(HTTP_STATUSES.NO_CONTENT_204) :
-            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-    })
-
 blogsRouter.get('/:blogId/posts', async (req: Request, res: Response): Promise<void> => {
     const foundBlog: BlogViewModel | null = await blogsQueryRepository.findBlogById(req.params.blogId)
     if (!foundBlog) {
@@ -75,8 +49,17 @@ blogsRouter.get('/:blogId/posts', async (req: Request, res: Response): Promise<v
     res.send(posts)
 })
 
+blogsRouter.post('/',
+    basicAuth,
+    validateBlogs(),
+    inputValidationMiddleware,
+    async (req: Request, res: Response): Promise<void> => {
+        const newBlog = await blogsService.createBlog(req.body)
+        res.status(HTTP_STATUSES.CREATED_201).send(newBlog)
+    })
+
 blogsRouter.post('/:blogId/posts',
-    authGuardMiddleware,
+    basicAuth,
     validatePostsInBlog(),
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
@@ -87,3 +70,22 @@ blogsRouter.post('/:blogId/posts',
         return res.status(HTTP_STATUSES.CREATED_201).send(newPost)
     }
 )
+
+blogsRouter.put('/:blogId',
+    basicAuth,
+    validateBlogs(),
+    inputValidationMiddleware,
+    async (req: Request, res: Response): Promise<void> => {
+        const blogId = req.params.blogId
+        const isUpdated = await blogsService.updateBlog(blogId, req.body)
+        isUpdated ? res.send(blogsQueryRepository.findBlogById(blogId)) :
+            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+    })
+
+blogsRouter.delete('/:blogId',
+    basicAuth,
+    async (req: Request, res: Response) => {
+        const isDeleted = await blogsService.deleteBlog(req.params.blogId)
+        isDeleted ? res.sendStatus(HTTP_STATUSES.NO_CONTENT_204) :
+            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+    })

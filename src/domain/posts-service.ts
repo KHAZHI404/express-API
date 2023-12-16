@@ -1,9 +1,7 @@
 import {postsRepository} from "../repositories/posts-repository";
 import {BlogViewModel} from "../models/blogs-models/blog-models";
-import {blogsRepository} from "../repositories/blogs-repository";
 import {CreatePostInputModel, PostDbModel, PostViewModel, UpdatePostModel} from "../models/posts-models/posts-models";
 import {blogsQueryRepository} from "../query-repositories/blogs-query-repository";
-
 
 
 export const postsService = {

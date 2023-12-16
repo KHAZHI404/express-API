@@ -2,13 +2,16 @@ import {Request, Response, Router} from "express";
 import {usersService} from "../domain/users-service";
 import {HTTP_STATUSES} from "../setting";
 import {usersQueryRepository} from "../query-repositories/users-query-repository";
-import {inputValidationMiddleware, validateUsers} from "../middlewares/input-validation-middleware";
-import {authGuardMiddleware} from "../middlewares/auth-guard-middleware";
+import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
+import {validateUsers} from "../models/users-models/users-validate";
+import {basicAuth} from "../middlewares/auth-middleware";
 
 
 export const usersRouter = Router({})
 
-usersRouter.get('/', async (req: Request, res: Response) => {
+usersRouter.get('/',
+    basicAuth,
+    async (req: Request, res: Response) => {
     const page = req.query.pageNumber ? Number(req.query.pageNumber) : 1
     const pageSize = req.query.pageSize ? Number(req.query.pageSize) : 10
     const sortBy = req.query.sortBy ? req.query.sortBy.toString() : 'createdAt'
@@ -22,17 +25,18 @@ usersRouter.get('/', async (req: Request, res: Response) => {
         sortBy, sortDirection, searchLoginTerm, searchEmailTerm)
     return res.send(foundUsers)
 })
+
 usersRouter.post('/',
-    // authGuardMiddleware,
-    // validateUsers(),
-    // inputValidationMiddleware,
+    basicAuth,
+    validateUsers(),
+    inputValidationMiddleware,
     async (req: Request, res: Response): Promise<void> => {
     const newUser = await usersService.createUser(req.body)
     res.status(HTTP_STATUSES.CREATED_201).send(newUser)
 })
 
 usersRouter.delete('/id',
-    // authGuardMiddleware,
+    basicAuth,
     async (req: Request, res: Response) => {
     const isDeleted = await usersService.deleteUser(req.params.id)
         isDeleted ? res.sendStatus(HTTP_STATUSES.NO_CONTENT_204) :

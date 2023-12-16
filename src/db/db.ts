@@ -8,13 +8,12 @@ config()
 const url = process.env.MONGO_URL as string
 const client = new MongoClient(url);
 
+
 const mongoDb = client.db('social-network')
 export const blogsCollection = mongoDb.collection<BlogDbModel>('blogs')
 export const postsCollection = mongoDb.collection<PostDbModel>('posts')
 export const usersCollection = mongoDb.collection<UserDbModel>('users')
 export const commentsCollection = mongoDb.collection<CommentDbModel>('comments')
-
-
 
 export async function runDb () {
     try {

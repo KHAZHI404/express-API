@@ -2,16 +2,15 @@ import bcrypt from 'bcrypt'
 import {CreateUserInputModel, UserDbModel, userMapper, UserViewModel} from "../models/users-models/users-models";
 import {usersRepository} from "../repositories/users-repository";
 import {ObjectId, WithId} from "mongodb";
-import {LoginInputModel} from "../models/login-models/login-models";
-import {usersCollection} from "../db/db";
+import {LoginInputModel} from "../models/auth-models/auth-models";
 
 
 export const usersService = {
 
     async createUser(body: CreateUserInputModel): Promise<UserViewModel> { //тут в видосе нужен юзерДБ тайп, зачем непонятно
 
-        const passwordSalt = await bcrypt.genSalt(10)
-        const passwordHash = await this._generateHash(body.password, passwordSalt)
+        // const passwordSalt = await bcrypt.genSalt(10)
+        const passwordHash = await bcrypt.hash(body.password, 10)
 
 
         const newUser: UserDbModel = {
@@ -38,9 +37,9 @@ export const usersService = {
         return null
     },
 
-    async _generateHash(password: string, salt: string) {
-        return await bcrypt.hash(password, salt)
-    },
+    // async _generateHash(password: string, salt: string) {
+    //     return await bcrypt.hash(password, salt)
+    // },
 
     async findUserById(userId: ObjectId | null) {
         const user = await usersRepository.findUserById(userId!)
