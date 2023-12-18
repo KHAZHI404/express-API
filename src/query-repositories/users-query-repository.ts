@@ -1,5 +1,6 @@
 import {usersCollection} from "../db/db";
-import {userMapper} from "../models/users-models/users-models";
+import {UserDbModel, userMapper, UserViewModel} from "../models/users-models/users-models";
+import {ObjectId, WithId} from "mongodb";
 
 
 export const usersQueryRepository = {
@@ -38,5 +39,14 @@ export const usersQueryRepository = {
             totalCount,
             items: users.map(user => userMapper(user))
         }
+    },
+
+    async findCurrentUser(userId: string): Promise<UserViewModel | null> {
+
+            if (!ObjectId.isValid(userId)) return null
+
+        const currentUser: WithId<UserDbModel> | null = await usersCollection.findOne({_id: new ObjectId(userId)})
+
+        return currentUser ? userMapper(currentUser) : null
     },
 }

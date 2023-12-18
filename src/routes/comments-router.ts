@@ -14,7 +14,6 @@ commentsRouter.get('/:commentId',
     const foundComment: CommentViewModel | null = await commentsQueryRepository.getCommentById(req.params.commentId)
     foundComment ? res.status(HTTP_STATUSES.OK_200).send(foundComment) :
         res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-
 })
 
 commentsRouter.put('/:commentId',

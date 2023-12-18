@@ -23,8 +23,9 @@ export const usersRepository = {
     },
 
     async findByLoginOrEmail(loginOrEmail: string): Promise<WithId<UserDbModel> | null> {
-        return await usersCollection.findOne({ $or: [ { email: loginOrEmail },
-                { userName: loginOrEmail } ] } )
+        const user = await usersCollection.findOne({ $or: [ { email: loginOrEmail }, { login: loginOrEmail } ] } )
+        console.log(loginOrEmail) // haji
+        return user
     },
 
     async deleteUser(id: string): Promise<boolean> {
@@ -36,6 +37,5 @@ export const usersRepository = {
     async deleteAll() {
         return  usersCollection.deleteMany({})
     },
-
 
 }

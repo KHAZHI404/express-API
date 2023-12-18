@@ -32,11 +32,10 @@ usersRouter.post('/',
     res.status(HTTP_STATUSES.CREATED_201).send(newUser)
 })
 
-usersRouter.delete('/id',
+usersRouter.delete('/:id',
     basicAuth,
     async (req: Request, res: Response) => {
     const isDeleted = await usersService.deleteUser(req.params.id)
         isDeleted ? res.sendStatus(HTTP_STATUSES.NO_CONTENT_204) :
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-
     })

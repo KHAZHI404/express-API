@@ -73,7 +73,7 @@ blogsRouter.put('/:blogId',
     async (req: Request, res: Response): Promise<void> => {
         const blogId = req.params.blogId
         const isUpdated = await blogsService.updateBlog(blogId, req.body)
-        isUpdated ? res.send(blogsQueryRepository.findBlogById(blogId)) :
+        isUpdated ? res.status(HTTP_STATUSES.NO_CONTENT_204).send(blogsQueryRepository.findBlogById(blogId)) :
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     })
 

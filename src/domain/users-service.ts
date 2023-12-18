@@ -7,17 +7,21 @@ import {LoginInputModel} from "../models/auth-models/auth-models";
 
 export const usersService = {
 
+    async findUserById(userId: ObjectId | null) {
+        const user = await usersRepository.findUserById(userId!)
+        if (!user) return null
+        return userMapper(user)
+
+    },
+
     async createUser(body: CreateUserInputModel): Promise<UserViewModel> {
-
         const passwordHash = await bcrypt.hash(body.password, 10)
-
         const newUser: UserDbModel = {
             login: body.login,
             email: body.email,
             password: passwordHash,
             createdAt: new Date().toISOString(),
         }
-
         return usersRepository.createUser(newUser)
     },
 
@@ -34,11 +38,4 @@ export const usersService = {
         }
         return null
     },
-
-    async findUserById(userId: ObjectId | null) {
-        const user = await usersRepository.findUserById(userId!)
-        if (!user) return null
-        return userMapper(user)
-
-    }
 }
