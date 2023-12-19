@@ -7,25 +7,28 @@ export const blogsQueryRepository = {
 
     async findBlogs(page: number,
                     pageSize: number,
-                    sortBy: string | 'createdAt',
+                    sortBy: string,
                     sortDirection: string,
                     searchNameTerm: string | null,): Promise<Paginator<BlogViewModel>> {
-        const filter: any = {}
+
+        let searchNameFilter = {}
         if (searchNameTerm) {
-            filter.name = {$regex: searchNameTerm, $options: 'i'}
+            searchNameFilter = {name: {$regex: searchNameTerm, $options: 'i'}}
         }
-
-        const sortOptions: any = []
-        sortOptions[sortBy] = sortDirection === 'asc' ? 1 : -1
-
-        const totalCount = await blogsCollection.countDocuments(filter)
-        const pagesCount = Math.ceil(totalCount / pageSize)
-        const scip = (page - 1) * pageSize
+        let sortOptions: { [key: string]: 1 | -1}  = {
+            [sortBy]: -1
+        }
+        if (sortDirection === "asc") {
+            sortOptions[sortBy] = 1
+        }
+        const totalCount = await blogsCollection.countDocuments(searchNameFilter)
+        const pagesCount = Math.ceil(totalCount / +pageSize)
+        const scip = (+page - 1) * +pageSize
         const blogs = await blogsCollection
-            .find(filter)
+            .find(searchNameFilter)
             .sort(sortOptions)
-            .limit(pageSize)
             .skip(scip)
+            .limit(+pageSize)
             .toArray()
 
         return {
@@ -33,7 +36,7 @@ export const blogsQueryRepository = {
             page,
             pageSize,
             totalCount,
-            items: blogs.map(blog => blogMapper(blog))
+            items: blogs.map(blogMapper)
         }
     },
 
@@ -44,26 +47,30 @@ export const blogsQueryRepository = {
                           sortDirection: string) {
         try {
             if (!ObjectId.isValid(id)) return null
-            const sortOptions: any = []
-            sortOptions[sortBy] = sortDirection === 'asc' ? 1 : -1
+            let sortOptions: { [key: string]: 1 | -1}  = {
+                [sortBy]: -1
+            }
+            if (sortDirection === "asc") {
+                sortOptions[sortBy] = 1
+            }
             const filter = {blogId: id}
 
             const totalCount = await postsCollection.countDocuments(filter)
-            const pagesCount = Math.ceil(totalCount / pageSize)
-            const scip = (pageNumber - 1) * pageSize
+            const pagesCount = Math.ceil(+totalCount / +pageSize)
+            const scip = (+pageNumber - 1) * +pageSize
             const posts = await postsCollection
                 .find(filter)
                 .sort(sortOptions)
-                .limit(pageSize)
                 .skip(scip)
+                .limit(+pageSize)
                 .toArray()
 
             return posts ? {
                 pagesCount,
-                pageNumber,
+                page: pageNumber,
                 pageSize,
                 totalCount,
-                items: posts.map(postMapper) //posts.map((post) => postMapper(post))
+                items: posts.map(postMapper)
             } : null
         } catch (e) {
             return e

@@ -1,6 +1,5 @@
 import {body} from "express-validator";
 
-// const websiteUrlPattern = '^https://([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$'
 const websiteUrlPattern= 'https:\/\/([a-zA-Z0-9-]+\.)+[a-zA-Z0-9-]+(\/[a-zA-Z0-9_-]+)*\/?$'
 
 export const validateBlogs = () => [

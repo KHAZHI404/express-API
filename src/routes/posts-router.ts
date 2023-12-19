@@ -11,6 +11,7 @@ import {validatePosts} from "../models/posts-models/posts-validate";
 import {getPageOptions} from "../types/types";
 import {commentsQueryRepository} from "../query-repositories/comments-query-repository";
 import {commentsService} from "../domain/comments-service";
+import {validatePostsInBlog} from "../models/blogs-models/blog-validate";
 
 export const postsRouter = Router({})
 
@@ -45,6 +46,7 @@ postsRouter.get('/:postId/comments',
 
 postsRouter.post('/:postId/comments',
     bearerAuth,
+    validatePostsInBlog(),
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
 

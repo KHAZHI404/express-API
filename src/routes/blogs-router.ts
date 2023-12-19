@@ -41,7 +41,7 @@ blogsRouter.get('/:blogId/posts',
         res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
         return
     }
-    res.send(posts)
+    res.status(HTTP_STATUSES.OK_200).send(posts)
 })
 
 blogsRouter.post('/',

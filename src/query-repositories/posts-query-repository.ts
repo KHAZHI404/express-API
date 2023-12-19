@@ -9,19 +9,21 @@ export const postsQueryRepository = {
                     pageSize: number,
                     sortBy: string | 'createdAt',
                     sortDirection: string): Promise<Paginator<PostViewModel>> {
-        const filter: any = {}
 
-        const sortOptions: any = []
-        sortOptions[sortBy] = sortDirection === 'asc' ? 1 : -1
-
-        const totalCount = await postsCollection.countDocuments(filter)
+        let sortOptions: { [key: string]: 1 | -1}  = {
+            [sortBy]: -1
+        }
+        if (sortDirection === "asc") {
+            sortOptions[sortBy] = 1
+        }
+        const totalCount = await postsCollection.countDocuments({})
         const pagesCount = Math.ceil(totalCount / pageSize)
         const scip = (page - 1) * pageSize
         const post = await postsCollection
-            .find(filter)
+            .find({})
             .sort(sortOptions)
-            .limit(pageSize)
             .skip(scip)
+            .limit(pageSize)
             .toArray()
 
         return {
@@ -29,7 +31,7 @@ export const postsQueryRepository = {
             page,
             pageSize,
             totalCount,
-            items: post.map(post => postMapper(post))
+            items: post.map(postMapper)
         }
     },
 
