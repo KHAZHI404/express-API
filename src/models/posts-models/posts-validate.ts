@@ -1,4 +1,5 @@
 import {body} from "express-validator";
+import {blogsQueryRepository} from "../../query-repositories/blogs-query-repository";
 
 export const validatePosts = () => [
     body('title')
@@ -23,5 +24,10 @@ export const validatePosts = () => [
         .isString()
         .trim()
         .notEmpty()
+        .custom(async value => {
+            const blog = await blogsQueryRepository.findBlogById(value)
+            if (!blog) throw new Error('blog not found')
+            return true
+        })
         .withMessage('errors in blogId'),
 ]

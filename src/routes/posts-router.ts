@@ -12,6 +12,7 @@ import {getPageOptions} from "../types/types";
 import {commentsQueryRepository} from "../query-repositories/comments-query-repository";
 import {commentsService} from "../domain/comments-service";
 import {validatePostsInBlog} from "../models/blogs-models/blog-validate";
+import {CommentViewModel} from "../models/comments-model/comments-models";
 
 export const postsRouter = Router({})
 
@@ -50,7 +51,8 @@ postsRouter.post('/:postId/comments',
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
 
-        const newComment = await commentsService.createComment({postId: req.params.postId, ...req.body})
+        const newComment: CommentViewModel | null = await commentsService.createComment({postId: req.params.postId, ...req.body})
+        // console.log(newComment, 'its comment')
         if (!newComment) {
             return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
         }

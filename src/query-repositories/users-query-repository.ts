@@ -12,24 +12,27 @@ export const usersQueryRepository = {
                      searchLoginTerm: string | null,
                      searchEmailTerm: string | null,
     ) {
-        const filter: any = {}
+        const filter: any = {$or: []}
         if (searchLoginTerm) {
-            filter.name = {$regex: searchLoginTerm, $options: 'i'}
+            filter.$or.push({login: {$regex: searchLoginTerm, $options: 'i'}})
         }
         if (searchEmailTerm) {
-            filter.name = {$regex: searchEmailTerm, $options: 'i'}
+            filter.$or.push({email: {$regex: searchEmailTerm, $options: 'i'}})
         }
-        const sortOptions: any = []
-        sortOptions[sortBy] = sortDirection === 'asc' ? 1 : -1
-
+        let sortOptions: { [key: string]: 1 | -1}  = {
+            [sortBy]: -1
+        }
+        if (sortDirection === "asc") {
+            sortOptions[sortBy] = 1
+        }
         const totalCount = await usersCollection.countDocuments(filter)
-        const pagesCount = Math.ceil(totalCount / pageSize)
-        const scip = (page - 1) * pageSize
+        const pagesCount = Math.ceil(totalCount / +pageSize)
+        const scip = (+page - 1) * +pageSize
         const users = await usersCollection
             .find(filter)
             .sort(sortOptions)
-            .limit(pageSize)
             .skip(scip)
+            .limit(+pageSize)
             .toArray()
 
         return {
@@ -42,11 +45,8 @@ export const usersQueryRepository = {
     },
 
     async findCurrentUser(userId: string): Promise<UserViewModel | null> {
-
-            if (!ObjectId.isValid(userId)) return null
-
+        if (!ObjectId.isValid(userId)) return null
         const currentUser: WithId<UserDbModel> | null = await usersCollection.findOne({_id: new ObjectId(userId)})
-
         return currentUser ? userMapper(currentUser) : null
     },
 }

@@ -15,6 +15,14 @@ export type CommentDbModel = {
     commentatorInfo: CommentatorInfo
     createdAt: string
 }
+
+export type CommentWidthPostModel = {
+    postId: string
+    content: CommentsInputModel
+    commentatorInfo: CommentatorInfo
+    createdAt: string
+}
+
 export type CommentViewModel = {
     id: string
     content: CommentsInputModel

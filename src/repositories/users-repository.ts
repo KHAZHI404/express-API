@@ -24,7 +24,6 @@ export const usersRepository = {
 
     async findByLoginOrEmail(loginOrEmail: string): Promise<WithId<UserDbModel> | null> {
         const user = await usersCollection.findOne({ $or: [ { email: loginOrEmail }, { login: loginOrEmail } ] } )
-        console.log(loginOrEmail) // haji
         return user
     },
 
