@@ -14,10 +14,13 @@ export const usersQueryRepository = {
     ) {
         const filter: any = {$or: []}
         if (searchLoginTerm) {
-            filter.$or.push({login: {$regex: searchLoginTerm, $options: 'i'}})
+            filter["$or"].push({login: {$regex: searchLoginTerm, $options: 'i'}})
         }
         if (searchEmailTerm) {
-            filter.$or.push({email: {$regex: searchEmailTerm, $options: 'i'}})
+            filter["$or"].push({email: {$regex: searchEmailTerm, $options: 'i'}})
+        }
+        if (filter["$or"].length === 0) {
+            filter["$or"].push({})
         }
         let sortOptions: { [key: string]: 1 | -1}  = {
             [sortBy]: -1

@@ -13,6 +13,7 @@ import {commentsQueryRepository} from "../query-repositories/comments-query-repo
 import {commentsService} from "../domain/comments-service";
 import {validatePostsInBlog} from "../models/blogs-models/blog-validate";
 import {CommentViewModel} from "../models/comments-model/comments-models";
+import {validateComments} from "../models/comments-model/comments-validate";
 
 export const postsRouter = Router({})
 
@@ -30,14 +31,18 @@ postsRouter.get('/:postId', async (req: Request, res: Response) => {
 
 postsRouter.get('/:postId/comments',
     async (req: Request, res: Response): Promise<void> => {
+
         const foundPost: PostViewModel | null = await postsQueryRepository.findPostById(req.params.postId)
         if (!foundPost) {
+            console.log('post not found')
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
             return
         }
+
         const { pageNumber, pageSize, sortBy, sortDirection } = getPageOptions(req.query);
 
         const comments = await commentsQueryRepository.getCommentsForPost(req.params.blogId, pageNumber, pageSize, sortBy, sortDirection)
+        console.log(comments, 'comments real')
         if (!comments) {
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
             return
@@ -47,11 +52,13 @@ postsRouter.get('/:postId/comments',
 
 postsRouter.post('/:postId/comments',
     bearerAuth,
-    validatePostsInBlog(),
+    validateComments(),
     inputValidationMiddleware,
     async (req: Request, res: Response) => {
-
-        const newComment: CommentViewModel | null = await commentsService.createComment({postId: req.params.postId, ...req.body})
+    const {id: userId, login: userLogin} = req.user!
+        const postId = req.params.postId
+        const content = req.body
+        const newComment: CommentViewModel | null = await commentsService.createComment({userId, userLogin}, postId, content)
         // console.log(newComment, 'its comment')
         if (!newComment) {
             return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)

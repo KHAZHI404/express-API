@@ -14,12 +14,7 @@ export const commentsRepository = {
         if(!ObjectId.isValid(id)) return false
         const result = await commentsCollection.updateOne({_id: new ObjectId(id)}, {
             $set: {
-                content: body.content,
-                commentatorInfo: {
-                    userId: body.commentatorInfo.userId,
-                    userLogin: body.commentatorInfo.userLogin
-                },
-                createdAt: body.createdAt
+                content: body.content
             }
         })
         return result.matchedCount === 1

@@ -26,7 +26,7 @@ export const inputValidationMiddleware = (req: Request, res: Response, next: Nex
         res.status(HTTP_STATUSES.BAD_REQUEST_400).send({errorsMessages: errorsMessages})
         return
     }
-    next()
+    return next()
 }
 
 // const errorsFormatter = (error: ValidationError): FieldError => {

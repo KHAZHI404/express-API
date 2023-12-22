@@ -1,31 +1,26 @@
 import {WithId} from "mongodb";
 
-
-export type CommentsInputModel = {
-    content: string
-}
-
 export type CommentatorInfo = {
     userId: string
     userLogin: string
 }
 
 export type CommentDbModel = {
-    content: CommentsInputModel
+    content: string
     commentatorInfo: CommentatorInfo
     createdAt: string
 }
 
 export type CommentWidthPostModel = {
     postId: string
-    content: CommentsInputModel
+    content: string
     commentatorInfo: CommentatorInfo
     createdAt: string
 }
 
 export type CommentViewModel = {
     id: string
-    content: CommentsInputModel
+    content: string
     commentatorInfo: CommentatorInfo
     createdAt: string
 }

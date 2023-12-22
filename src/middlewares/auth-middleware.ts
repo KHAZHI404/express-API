@@ -3,6 +3,7 @@ import {HTTP_STATUSES} from "../setting";
 import {jwtService} from "../application/jwt-service";
 import {usersService} from "../domain/users-service";
 import {UserViewModel} from "../models/users-models/users-models";
+import {ObjectId} from "mongodb";
 
 
 export const basicAuth = (req: Request, res: Response, next: NextFunction) => {
@@ -23,16 +24,19 @@ export const basicAuth = (req: Request, res: Response, next: NextFunction) => {
 export const bearerAuth = async (req: Request, res: Response, next: NextFunction) => {
     const auth = req.headers['authorization']
     if (!auth) {
-        res.send(HTTP_STATUSES.NOT_AUTHORIZED_401)
-        return
+        return res.send(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
     const token = auth.split(' ')[1]  //bearer fasdfasdfasdf
 
     const userId = await jwtService.getUserIdByToken(token)
+    console.log(userId, 'its userid')
+    if (!userId) return  res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+    if(!ObjectId.isValid(userId)) return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+
     const user: UserViewModel | null = await usersService.findUserById(userId)
     if (user) {
         req.user = user
-        next()
+        return next()
     }
     res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
 }

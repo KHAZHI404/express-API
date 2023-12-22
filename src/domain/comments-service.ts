@@ -2,23 +2,26 @@ import {commentsRepository} from "../repositories/comments-repository";
 import {CommentDbModel, CommentViewModel, CommentWidthPostModel} from "../models/comments-model/comments-models";
 import {PostViewModel} from "../models/posts-models/posts-models";
 import {postsQueryRepository} from "../query-repositories/posts-query-repository";
+import {userInfo} from "os";
+import {ObjectId} from "mongodb";
 
 
 export const commentsService = {
 
-    async createComment(inputData: CommentWidthPostModel): Promise<CommentViewModel | null> {
-        const post: PostViewModel | null = await postsQueryRepository.findPostById(inputData.postId)
-        if (!post) return null
+    async createComment(userData: {userId: string, userLogin: string}, postId: string, content: string): Promise<CommentViewModel | null> {
 
+        const post: PostViewModel | null = await postsQueryRepository.findPostById(postId)
+        // console.log(post, 'its post')
+        if (!post) return null
         const newComment: CommentDbModel = {
-            content: inputData.content,
+            content: content,
             commentatorInfo: {
-                userId: inputData.commentatorInfo.userId,
-                userLogin: inputData.commentatorInfo.userLogin
+                userId: userData.userId,
+                userLogin: userData.userLogin
         },
             createdAt: new Date().toISOString()
         }
-        // console.log(newComment, 'its comment')
+        // console.log(newComment, 'its comment 2 ')
 
         return await commentsRepository.createComment(newComment)
     },
