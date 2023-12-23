@@ -36,12 +36,10 @@ export const postsQueryRepository = {
     },
 
     async findPostById(id: string): Promise<PostViewModel | null> {
-        console.log(ObjectId.isValid(id))
-        // if (!ObjectId.isValid(id)) return null
+        if (!ObjectId.isValid(id)) return null
         const post: WithId<PostDbModel> | null = await postsCollection.findOne({_id: new ObjectId(id)}) // какая ошибка в этой строчке еклмн?
-        console.log(post, 'its post')
+        // console.log(id, 'its id', post, 'its post')
         return post ? postMapper(post) : null
-
     },
 
 }

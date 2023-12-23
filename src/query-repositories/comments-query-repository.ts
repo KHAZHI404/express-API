@@ -19,16 +19,15 @@ export const commentsQueryRepository = {
                           pageSize: number,
                           sortBy: string,
                           sortDirection: string) {
-            if (!ObjectId.isValid(id)) return null
             let sortOptions: { [key: string]: 1 | -1}  = {
                 [sortBy]: -1
             }
             if (sortDirection === "asc") {
                 sortOptions[sortBy] = 1
             }
-            const filter = {blogId: id}
+            const filter = {postId: id}
 
-            const totalCount = await commentsCollection.countDocuments(filter)
+            const totalCount = await commentsCollection.countDocuments(filter) // откуда он берет дополнительную единицу?
             const pagesCount = Math.ceil(totalCount / +pageSize)
             const scip = (+pageNumber - 1) * +pageSize
             const comments = await commentsCollection
@@ -38,7 +37,6 @@ export const commentsQueryRepository = {
                 .skip(scip)
                 .toArray();
 
-            console.log(comments, 'its comm')
             return comments ? {
                 pagesCount,
                 pageNumber,

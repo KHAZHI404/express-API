@@ -6,6 +6,7 @@ import {commentsQueryRepository} from "../query-repositories/comments-query-repo
 import {CommentViewModel} from "../models/comments-model/comments-models";
 import {bearerAuth} from "../middlewares/auth-middleware";
 import {validateComments} from "../models/comments-model/comments-validate";
+import {ownerMiddlevare} from "../middlewares/owner-middleware";
 
 export const commentsRouter = Router({})
 
@@ -20,6 +21,7 @@ commentsRouter.put('/:commentId',
     bearerAuth,
     validateComments(),
     inputValidationMiddleware,
+    ownerMiddlevare,
     async (req: Request, res: Response) => {
         const commentId = req.params.commentId
         const isUpdated = await commentsService.updateComment(commentId, req.body)
