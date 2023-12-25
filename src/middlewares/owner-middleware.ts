@@ -4,7 +4,7 @@ import {HTTP_STATUSES} from "../setting";
 
 export const ownerMiddlevare = async (req: Request, res: Response, next: NextFunction)=> {
 
-    const commentId = req.params.id
+    const commentId = req.params.commentId
     console.log(commentId, 'commentId')
     const comment = await commentsQueryRepository.getCommentById(commentId)
     console.log(comment, 'comment')

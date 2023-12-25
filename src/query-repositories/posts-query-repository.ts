@@ -7,7 +7,7 @@ export const postsQueryRepository = {
 
     async findPosts(page: number,
                     pageSize: number,
-                    sortBy: string | 'createdAt',
+                    sortBy: string,
                     sortDirection: string): Promise<Paginator<PostViewModel>> {
 
         let sortOptions: { [key: string]: 1 | -1}  = {
@@ -25,6 +25,7 @@ export const postsQueryRepository = {
             .skip(scip)
             .limit(pageSize)
             .toArray()
+        console.log(totalCount, 'its totalCount')
 
         return {
             pagesCount,
@@ -37,8 +38,7 @@ export const postsQueryRepository = {
 
     async findPostById(id: string): Promise<PostViewModel | null> {
         if (!ObjectId.isValid(id)) return null
-        const post: WithId<PostDbModel> | null = await postsCollection.findOne({_id: new ObjectId(id)}) // какая ошибка в этой строчке еклмн?
-        // console.log(id, 'its id', post, 'its post')
+        const post: WithId<PostDbModel> | null = await postsCollection.findOne({_id: new ObjectId(id)})
         return post ? postMapper(post) : null
     },
 

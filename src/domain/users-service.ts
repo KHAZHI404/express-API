@@ -1,4 +1,5 @@
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
+// import bcrypt from 'bcrypt' //ошибка на bcrypt
 import {CreateUserInputModel, UserDbModel, userMapper, UserViewModel} from "../models/users-models/users-models";
 import {usersRepository} from "../repositories/users-repository";
 import {ObjectId, WithId} from "mongodb";

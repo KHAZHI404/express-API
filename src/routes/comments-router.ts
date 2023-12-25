@@ -23,6 +23,7 @@ commentsRouter.put('/:commentId',
     inputValidationMiddleware,
     ownerMiddlevare,
     async (req: Request, res: Response) => {
+
         const commentId = req.params.commentId
         const isUpdated = await commentsService.updateComment(commentId, req.body)
         isUpdated ? res.sendStatus(HTTP_STATUSES.NO_CONTENT_204) :

@@ -38,5 +38,6 @@ export const bearerAuth = async (req: Request, res: Response, next: NextFunction
         req.user = user
         return next()
     }
-    res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+    console.log('not user')
+    res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
 }
