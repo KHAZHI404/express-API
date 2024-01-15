@@ -41,7 +41,7 @@ postsRouter.get('/:postId/comments',
         }
 
         const { pageNumber, pageSize, sortBy, sortDirection } = getPageOptions(req.query);
-        const comments = await commentsQueryRepository.getCommentsForPost(req.params.blogId, pageNumber, pageSize, sortBy, sortDirection)
+        const comments = await commentsQueryRepository.getCommentsForPost(req.params.postId, pageNumber, pageSize, sortBy, sortDirection)
         if (!comments) {
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
             return

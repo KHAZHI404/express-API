@@ -32,6 +32,7 @@ commentsRouter.put('/:commentId',
 
 commentsRouter.delete('/:commentId',
     bearerAuth,
+    ownerMiddlevare,
     async (req: Request, res: Response) => {
         const isDeleted = await commentsService.deleteComment(req.params.commentId)
         isDeleted ? res.sendStatus(HTTP_STATUSES.NO_CONTENT_204) :

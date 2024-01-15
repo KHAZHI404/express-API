@@ -1,21 +1,53 @@
 import {Request, Response, Router} from "express";
-import {usersService} from "../domain/users-service";
+import {authService} from "../domain/auth-service";
 import {HTTP_STATUSES} from "../setting";
 import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
 import {jwtService} from "../application/jwt-service";
 import {bearerAuth} from "../middlewares/auth-middleware";
-import {WithId} from "mongodb";
-import {UserDbModel} from "../models/users-models/users-models";
 import {validateAuthorization} from "../models/auth-models/auth-validate";
 import {usersQueryRepository} from "../query-repositories/users-query-repository";
+import {authRegistrationValidation} from "../middlewares/userAlreadyExist";
 
 export const authRouter = Router()
+
+authRouter.post('/registration-confirmation',
+    //validator искать юзера по рег коду 
+    inputValidationMiddleware,
+    async (req: Request, res: Response)  => {
+        const result  = await authService.confirmEmail(req.body.code)
+        if (!result) return res.sendStatus(474)
+        res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
+        return
+    }
+)
+
+authRouter.post('/registration',
+    authRegistrationValidation(),
+    async (req: Request, res: Response): Promise<void>  => {
+        const user  = await authService.createUserAccount(req.body)
+        if (!user) {
+            res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
+            return
+        }
+        res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
+        return
+    }
+)
+
+authRouter.post('/registration-email-resending',
+    async (req: Request, res: Response)  => {
+        const user  = await authService.resendCode(req.body.email)
+        if (!user) return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
+        res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
+        return
+    }
+)
 
 authRouter.post('/login',
     validateAuthorization(),
     inputValidationMiddleware,
     async (req: Request, res: Response): Promise<void>  => {
-    const user: WithId<UserDbModel> | null  = await usersService.checkCredentials(req.body)
+        const user  = await authService.checkCredentials(req.body)
         if (user) {
             const token = await jwtService.createJWT(user)
             res.status(HTTP_STATUSES.OK_200).send({accessToken: token})
@@ -26,18 +58,17 @@ authRouter.post('/login',
     }
 )
 
-
-        authRouter.get('/me' ,
-            bearerAuth,
-            async (req: Request, res: Response) => {
-            const userId = req.user!.id
-                const currentUser = await usersQueryRepository.findCurrentUser(userId)
-                console.log(currentUser)
-                if (!currentUser) return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-                res.send({
-                    email: currentUser.email,
-                    login: currentUser.login,
-                    userId: currentUser.id
-                })
+authRouter.get('/me' ,
+    bearerAuth,
+    async (req: Request, res: Response) => {
+    const userId = req.user!.id
+        const currentUser = await usersQueryRepository.findCurrentUser(userId)
+        console.log(currentUser)
+        if (!currentUser) return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+        res.send({
+            email: currentUser.email,
+            login: currentUser.login,
+            userId: currentUser.id
         })
-
+     }
+)

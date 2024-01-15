@@ -9,9 +9,9 @@ export const commentsService = {
     async createComment(userData: {userId: string, userLogin: string}, postId: string, content: string): Promise<CommentViewModel | null> {
 
         const post: PostViewModel | null = await postsQueryRepository.findPostById(postId)
-        console.log(post, 'its post')
         if (!post) return null
         const newComment: CommentDbModel = {
+            postId: postId,
             content: content,
             commentatorInfo: {
                 userId: userData.userId,

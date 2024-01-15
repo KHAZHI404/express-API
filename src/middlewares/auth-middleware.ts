@@ -1,9 +1,9 @@
 import {NextFunction, Request, Response} from "express";
 import {HTTP_STATUSES} from "../setting";
 import {jwtService} from "../application/jwt-service";
-import {usersService} from "../domain/users-service";
 import {UserViewModel} from "../models/users-models/users-models";
 import {ObjectId} from "mongodb";
+import {userService} from "../domain/user-service";
 
 
 export const basicAuth = (req: Request, res: Response, next: NextFunction) => {
@@ -33,7 +33,7 @@ export const bearerAuth = async (req: Request, res: Response, next: NextFunction
     if (!userId) return  res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     if(!ObjectId.isValid(userId)) return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
 
-    const user: UserViewModel | null = await usersService.findUserById(userId)
+    const user: UserViewModel | null = await userService.findUserById(userId.toString())
     if (user) {
         req.user = user
         return next()

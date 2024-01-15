@@ -1,4 +1,4 @@
-import {WithId} from "mongodb";
+import {ObjectId, WithId} from "mongodb";
 
 export type CommentatorInfo = {
     userId: string
@@ -9,6 +9,7 @@ export type CommentDbModel = {
     content: string
     commentatorInfo: CommentatorInfo
     createdAt: string
+    postId: string
 }
 
 export type CommentWidthPostModel = {

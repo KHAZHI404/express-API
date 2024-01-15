@@ -8,14 +8,14 @@ import {CommentDbModel, commentMapper} from "../models/comments-model/comments-m
 export const commentsQueryRepository = {
 
     async getCommentById(id: string) {
-        // if (!ObjectId.isValid(id)) return null // что с тобой не так?
+        if (!ObjectId.isValid(id)) return null // что с тобой не так?
         const comment: WithId<CommentDbModel> | null = await commentsCollection.findOne(
             {_id: new ObjectId(id)})
         return comment ? commentMapper(comment) : null
     },
 
     async getCommentsForPost(id: string,
-                          pageNumber: number,
+                          page: number,
                           pageSize: number,
                           sortBy: string,
                           sortDirection: string) {
@@ -29,7 +29,7 @@ export const commentsQueryRepository = {
 
             const totalCount = await commentsCollection.countDocuments(filter) // откуда он берет дополнительную единицу?
             const pagesCount = Math.ceil(totalCount / +pageSize)
-            const scip = (+pageNumber - 1) * +pageSize
+            const scip = (+page - 1) * +pageSize
             const comments = await commentsCollection
                 .find(filter)
                 .sort(sortOptions)
@@ -39,7 +39,7 @@ export const commentsQueryRepository = {
 
             return comments ? {
                 pagesCount,
-                pageNumber,
+                page,
                 pageSize,
                 totalCount,
                 items: comments.map(commentMapper)

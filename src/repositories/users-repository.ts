@@ -12,18 +12,43 @@ export const usersRepository = {
             .toArray()
     },
 
-    async createUser(user: UserDbModel): Promise<UserViewModel> {
-        const result: InsertOneResult<UserDbModel> = await usersCollection.insertOne({...user})
-        return userMapper({_id: result.insertedId, ...user})
+    // async createUserAccount(user: UserDbModel): Promise<UserViewModel> {
+    //     const result: InsertOneResult<UserDbModel> = await usersAccountsCollection.insertOne({...user})
+    //     return userAccountMapper({_id: result.insertedId, ...user})
+    // },
+
+    async updateConfirmation(id: string) {
+        if(!ObjectId.isValid(id)) return false
+        const result = await usersCollection.updateOne({_id: new ObjectId(id)},
+          {$set: {'emailConfirmation.isConfirmed': true}})
+        return result.matchedCount === 1
     },
 
-    async findUserById(id: ObjectId) {
-        let product = await usersCollection.findOne({_id: id})
+    async updateReqCode(email: string, code: string, data: Date) {
+        await usersCollection.updateOne({"accountData.email": email}, {$set: {
+            "emailConfirmation.confirmationCode": code,
+                "emailConfirmation.experationDate": data,
+            }})
+    },
+
+    async findUserByConfirmationCode(code: string) {
+      const user = await usersCollection.findOne( {'emailConfirmation.confirmationCode': code})
+        return user ? user : null
+    },
+
+    async createUser(user: UserDbModel): Promise<UserViewModel> {
+        const result: InsertOneResult<UserDbModel> = await usersCollection.insertOne({...user})
+        return userMapper({...user})
+    },
+
+    async findUserById(id: string) {
+        if(!ObjectId.isValid(id)) return false
+        let product = await usersCollection.findOne({_id: new ObjectId(id)})
         return product ? product : null
     },
 
     async findByLoginOrEmail(loginOrEmail: string): Promise<WithId<UserDbModel> | null> {
-        const user = await usersCollection.findOne({ $or: [ { email: loginOrEmail }, { login: loginOrEmail } ] } )
+        const user = await usersCollection.findOne({ $or: [ { "accountData.email": loginOrEmail }, { "accountData.userName": loginOrEmail } ] } )
         return user
     },
 
