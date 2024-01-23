@@ -21,7 +21,7 @@ export const usersRepository = {
         if(!ObjectId.isValid(id)) return false
         const result = await usersCollection.updateOne({_id: new ObjectId(id)},
           {$set: {'emailConfirmation.isConfirmed': true}})
-        return result.matchedCount === 1
+        return result.matchedCount === 1 //modifiedCount === 1
     },
 
     async updateReqCode(email: string, code: string, data: Date) {

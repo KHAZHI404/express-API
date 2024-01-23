@@ -4,8 +4,16 @@ import {MongoClient} from "mongodb";
 import {config} from 'dotenv'
 import {UserDbModel} from "../models/users-models/users-models";
 import {CommentDbModel} from "../models/comments-model/comments-models";
+
 config()
+
 const url = process.env.MONGO_URL as string
+
+if (!url) {
+    console.error('URI-строка подключения к MongoDB не определена.');
+    process.exit(1);
+  }
+
 const client = new MongoClient(url);
 
 

@@ -6,16 +6,32 @@ import {jwtService} from "../application/jwt-service";
 import {bearerAuth} from "../middlewares/auth-middleware";
 import {validateAuthorization} from "../models/auth-models/auth-validate";
 import {usersQueryRepository} from "../query-repositories/users-query-repository";
-import {authRegistrationValidation} from "../middlewares/userAlreadyExist";
+import {authRegistrationValidation, emailValidation} from "../middlewares/userAlreadyExist";
+import { codeValidation } from "../middlewares/code-validation";
 
 export const authRouter = Router()
 
+authRouter.post('/login',
+    validateAuthorization(),
+    inputValidationMiddleware,
+    async (req: Request, res: Response): Promise<void>  => {
+        const user  = await authService.checkCredentials(req.body)
+        if (user) {
+            const token = await jwtService.createJWT(user)
+            res.status(HTTP_STATUSES.OK_200).send({accessToken: token})
+            console.log(token)
+        } else {
+            res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+        }
+    }
+)
+
 authRouter.post('/registration-confirmation',
-    //validator искать юзера по рег коду 
+    codeValidation,
     inputValidationMiddleware,
     async (req: Request, res: Response)  => {
         const result  = await authService.confirmEmail(req.body.code)
-        if (!result) return res.sendStatus(474)
+        if (!result) return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400) // 474?
         res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
         return
     }
@@ -35,26 +51,13 @@ authRouter.post('/registration',
 )
 
 authRouter.post('/registration-email-resending',
+    emailValidation,
+    inputValidationMiddleware,
     async (req: Request, res: Response)  => {
         const user  = await authService.resendCode(req.body.email)
         if (!user) return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
         res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
         return
-    }
-)
-
-authRouter.post('/login',
-    validateAuthorization(),
-    inputValidationMiddleware,
-    async (req: Request, res: Response): Promise<void>  => {
-        const user  = await authService.checkCredentials(req.body)
-        if (user) {
-            const token = await jwtService.createJWT(user)
-            res.status(HTTP_STATUSES.OK_200).send({accessToken: token})
-            console.log(token)
-        } else {
-            res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
-        }
     }
 )
 

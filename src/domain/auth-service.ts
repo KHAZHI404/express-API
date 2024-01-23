@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs'
 // import bcrypt from 'bcrypt' //ошибка на bcrypt
-import {CreateUserInputModel, UserViewModel} from "../models/users-models/users-models";
+import {CreateUserInputModel, UserDbModel, UserViewModel} from "../models/users-models/users-models";
 import {usersRepository} from "../repositories/users-repository";
 import {ObjectId} from "mongodb";
 import {LoginInputModel} from "../models/auth-models/auth-models";
@@ -49,7 +49,7 @@ export const authService = {
         const userByEmail = await usersRepository.findByLoginOrEmail(inputData.login)
         if (userByEmail) return false
         const passwordHash = await bcrypt.hash(inputData.password, 10)
-        const user = {
+        const user: UserDbModel = {
             _id: new ObjectId(),
             accountData: {
                 userName: inputData.login,
@@ -66,13 +66,13 @@ export const authService = {
                 isConfirmed: false
             }
         }
+        
         const emailData = {
             email: inputData.email,
             subject: 'email confirmation',
             message:`
         <h1>Thanks for your registration</h1>
-        <p>
-            To finish registration, please follow the link below:
+        <p>To finish registration, please follow the link below:
             <a href='https://somesite.com/confirm-email?code=${passwordHash}'>
                 complete registration
             </a>
@@ -81,7 +81,9 @@ export const authService = {
         <p>${passwordHash}</p>
     `
         }
-        const createResult= await usersRepository.createUser(user)
+
+        const createResult= await usersRepository.createUser(user) 
+
         try {
             await emailManager.sendEmailRecoveryMessage(emailData)
             console.log('письмо отправлено')
@@ -91,6 +93,8 @@ export const authService = {
             await usersRepository.deleteUser(user._id.toString())
             return null
         }
+        
+        // return createResult
     },
 
     async checkCredentials(body: LoginInputModel) {

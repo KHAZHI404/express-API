@@ -16,7 +16,6 @@ export const basicAuth = (req: Request, res: Response, next: NextFunction) => {
     if (authType !== 'Basic') return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     const decodedToken = Buffer.from(authValue, "base64").toString()
     const [login, password] = decodedToken.split(":")
-        // atob(authValue).split(':') // проверить atob
     if (login !== 'admin' || password !== 'qwerty') return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     next()
 }
@@ -29,7 +28,6 @@ export const bearerAuth = async (req: Request, res: Response, next: NextFunction
     const token = auth.split(' ')[1]  //bearer fasdfasdfasdf
 
     const userId = await jwtService.getUserIdByToken(token)
-    console.log(userId, 'its userid')
     if (!userId) return  res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     if(!ObjectId.isValid(userId)) return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
 
@@ -38,6 +36,5 @@ export const bearerAuth = async (req: Request, res: Response, next: NextFunction
         req.user = user
         return next()
     }
-    console.log('not user')
     res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
 }

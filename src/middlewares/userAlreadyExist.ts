@@ -5,15 +5,14 @@ import {inputValidationMiddleware} from "./input-validation-middleware";
 
 export const uniqueEmailValidator = body('email').custom(async (body) => {
     const userByEmail: UserDbModel | null = await usersRepository.findByLoginOrEmail(body);
-    console.log(userByEmail)
     if (userByEmail) {
         throw new Error('User already exists');
     }
     return true;
 });
+
 export const uniqueLoginValidator = body('login').custom(async (body) => {
     const userByLogin: UserDbModel | null = await usersRepository.findByLoginOrEmail(body);
-    console.log(userByLogin, 'user by login')
     if (userByLogin) {
         throw new Error('User already exists');
     }
@@ -38,4 +37,5 @@ export const passwordValidation = body('password')
     .trim()
     .isLength({min: 6, max:20})
     .withMessage('incorrect password');
+
 export const authRegistrationValidation = () => [uniqueEmailValidator, uniqueLoginValidator, loginValidation, emailValidation, passwordValidation, inputValidationMiddleware];
