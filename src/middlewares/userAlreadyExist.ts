@@ -19,6 +19,22 @@ export const uniqueLoginValidator = body('login').custom(async (body) => {
     return true;
 });
 
+export const emailConfirmed = body('email').custom(async (body) => {
+    const userByEmail: UserDbModel | null = await usersRepository.findByLoginOrEmail(body);
+    if (userByEmail?.emailConfirmation.isConfirmed) {
+        throw new Error('Email confirmed');
+    }
+    return true;
+});
+
+export const emailExist = body('email').custom(async (body) => {
+    const userByEmail: UserDbModel | null = await usersRepository.findByLoginOrEmail(body);
+    if (!userByEmail) {
+        throw new Error('User doesnt exists');
+    }
+    return true;
+});
+
 export const loginValidation = body('login')
     .isString()
     .trim()
@@ -39,3 +55,4 @@ export const passwordValidation = body('password')
     .withMessage('incorrect password');
 
 export const authRegistrationValidation = () => [uniqueEmailValidator, uniqueLoginValidator, loginValidation, emailValidation, passwordValidation, inputValidationMiddleware];
+export const emailResendingValidation = () => [emailExist, emailConfirmed, emailValidation, inputValidationMiddleware];

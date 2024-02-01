@@ -13,3 +13,7 @@ export type MeViewModel = {
     login:	string
     userId:	string
 }
+
+export type TokenDbModel = {
+    accessToken: string
+}

@@ -25,7 +25,6 @@ export const postsQueryRepository = {
             .skip(scip)
             .limit(pageSize)
             .toArray()
-        console.log(totalCount, 'its totalCount')
 
         return {
             pagesCount,

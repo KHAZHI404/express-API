@@ -57,7 +57,6 @@ postsRouter.post('/:postId/comments',
     const {id: userId, login: userLogin} = req.user!
         const postId = req.params.postId
         const content = req.body.content
-        console.log(postId, 'its post id')
         const newComment: CommentViewModel | null = await commentsService.createComment({userId, userLogin}, postId, content)
         if (!newComment) {
             return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)

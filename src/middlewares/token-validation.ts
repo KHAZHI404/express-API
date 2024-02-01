@@ -18,11 +18,24 @@ export const alreadyConfirm = body('code').custom(async (code) => {
         return true;
     });
 
-export const codeValidation = body('code')
-        .isString()
-        .trim()
-        .notEmpty()
-        .withMessage('errors in code');
 
 
-        export const confirmationValidation = () => [codeDoesntExist, alreadyConfirm, codeValidation, inputValidationMiddleware];
+    
+    export const validateToken = () => [
+        body('accessToken')
+            .isString()
+            .trim()
+            .notEmpty()
+            .withMessage('errors in accessToken')
+    ]
+
+
+        // export const tokenValidation = () => [codeDoesntExist, alreadyConfirm, validateToken, inputValidationMiddleware];
+
+
+
+
+
+        export type TokenDbModel = {
+            accessToken: string
+        }

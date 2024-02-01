@@ -21,7 +21,6 @@ export const emailAdapter = {
             subject: subject,
             html: message,
         })
-        console.log(email, subject, message)
         return info
     },
 }

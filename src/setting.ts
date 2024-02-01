@@ -6,6 +6,7 @@ import {usersRouter} from "./routes/users-router";
 import {commentsRouter} from "./routes/comments-router";
 import {authRouter} from "./routes/auth-router";
 import {emailRouter} from "./routes/email-router";
+import cookieParser from "cookie-parser";
 
 export const RouterPaths = {
     blogs: '/blogs',
@@ -19,6 +20,7 @@ export const RouterPaths = {
 export const app = express()
 
 const bodyParser = express.json()
+app.use(cookieParser())
 app.use(bodyParser)
 app.use(RouterPaths.blogs, blogsRouter)
 app.use(RouterPaths.posts, postsRouter)
@@ -27,6 +29,7 @@ app.use(RouterPaths.users, usersRouter)
 app.use(RouterPaths.comments, commentsRouter)
 app.use(RouterPaths.auth, authRouter)
 app.use(RouterPaths.email, emailRouter)
+
 
 export const HTTP_STATUSES = {
     OK_200: 200,

@@ -4,6 +4,7 @@ import {MongoClient} from "mongodb";
 import {config} from 'dotenv'
 import {UserDbModel} from "../models/users-models/users-models";
 import {CommentDbModel} from "../models/comments-model/comments-models";
+import { TokenDbModel } from "../models/auth-models/auth-models";
 
 config()
 
@@ -22,6 +23,8 @@ export const blogsCollection = mongoDb.collection<BlogDbModel>('blogs')
 export const postsCollection = mongoDb.collection<PostDbModel>('posts')
 export const usersCollection = mongoDb.collection<UserDbModel>('users')
 export const commentsCollection = mongoDb.collection<CommentDbModel>('comments')
+export const blacklistTokens = mongoDb.collection<TokenDbModel>('tokens')
+
 
 export async function runDb () {
     try {

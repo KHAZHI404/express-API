@@ -6,8 +6,13 @@ import {jwtService} from "../application/jwt-service";
 import {bearerAuth} from "../middlewares/auth-middleware";
 import {validateAuthorization} from "../models/auth-models/auth-validate";
 import {usersQueryRepository} from "../query-repositories/users-query-repository";
-import {authRegistrationValidation, emailValidation} from "../middlewares/userAlreadyExist";
-import { codeValidation } from "../middlewares/code-validation";
+import {authRegistrationValidation, emailResendingValidation} from "../middlewares/userAlreadyExist";
+import { confirmationValidation } from "../middlewares/code-validation";
+import { blacklistTokens } from "../db/db";
+import { validateToken } from "../middlewares/token-validation";
+import { verifyTokenInCookie } from "../middlewares/verifyTokenInCookie";
+import { verifyTokenInBody } from "../middlewares/verifyTokenInBody";
+
 
 export const authRouter = Router()
 
@@ -15,20 +20,55 @@ authRouter.post('/login',
     validateAuthorization(),
     inputValidationMiddleware,
     async (req: Request, res: Response): Promise<void>  => {
-        const user  = await authService.checkCredentials(req.body)
+
+        const user: any  = await authService.checkCredentials(req.body)
         if (user) {
-            const token = await jwtService.createJWT(user)
-            res.status(HTTP_STATUSES.OK_200).send({accessToken: token})
-            console.log(token)
+            console.log(user._id, 'first')
+            const accessToken = await jwtService.generateToken( user._id.toString(), '10s'); 
+            const refreshToken = await jwtService.generateToken( user._id.toString(), '20s');
+
+            res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true});
+            res.status(HTTP_STATUSES.OK_200).send({accessToken: accessToken})
         } else {
             res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
         }
     }
 )
 
-authRouter.post('/registration-confirmation',
-    codeValidation,
+
+authRouter.post('/refresh-token', 
+    verifyTokenInCookie,
+    async (req: Request, res: Response) => {
+        const refreshToken = req.cookies.refreshToken;
+        const decodedRefreshToken = await jwtService.verifyRefreshToken(refreshToken);
+        if (decodedRefreshToken) {
+          const newAccessToken = await jwtService.generateToken( decodedRefreshToken, '10s');
+          const newRefreshToken = await jwtService.generateToken( decodedRefreshToken , '20s');
+          res.cookie('refreshToken', newRefreshToken, {httpOnly: true, secure: true});
+          res.send({ accessToken: newAccessToken });
+
+        } else {
+          res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+        }
+      });
+ 
+authRouter.post('/auth/logout', 
+    verifyTokenInCookie,
     inputValidationMiddleware,
+        async (req: Request, res: Response) => {
+        const refreshToken = req.cookies.refreshToken;
+        const decodedRefreshToken = await jwtService.verifyRefreshToken(refreshToken);
+
+        if (decodedRefreshToken) {
+          await blacklistTokens.insertOne({...refreshToken})      
+          res.send(HTTP_STATUSES.OK_200);
+        } else {
+          res.status(HTTP_STATUSES.NOT_AUTHORIZED_401)
+        }
+      });
+ 
+authRouter.post('/registration-confirmation',
+    confirmationValidation(),
     async (req: Request, res: Response)  => {
         const result  = await authService.confirmEmail(req.body.code)
         if (!result) return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400) // 474?
@@ -51,8 +91,7 @@ authRouter.post('/registration',
 )
 
 authRouter.post('/registration-email-resending',
-    emailValidation,
-    inputValidationMiddleware,
+    emailResendingValidation(),
     async (req: Request, res: Response)  => {
         const user  = await authService.resendCode(req.body.email)
         if (!user) return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
@@ -66,7 +105,6 @@ authRouter.get('/me' ,
     async (req: Request, res: Response) => {
     const userId = req.user!.id
         const currentUser = await usersQueryRepository.findCurrentUser(userId)
-        console.log(currentUser)
         if (!currentUser) return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
         res.send({
             email: currentUser.email,

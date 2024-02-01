@@ -5,6 +5,7 @@ import {HTTP_STATUSES} from "../setting";
 
 
 export const inputValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
+    // const errorsFormatter = (error: ValidationError): FieldError => {
     const errors = validationResult(req).formatWith(error => {
         switch (error.type) {
             case 'field':
@@ -14,7 +15,7 @@ export const inputValidationMiddleware = (req: Request, res: Response, next: Nex
                 };
             default: return {
                 message: error.msg,
-                field: 'error some'
+                field: 'unknown'
             }
 
         }
@@ -29,17 +30,3 @@ export const inputValidationMiddleware = (req: Request, res: Response, next: Nex
     return next()
 }
 
-// const errorsFormatter = (error: ValidationError): FieldError => {
-//     switch (error.type) {
-//         case "field":
-//             return {
-//                 message: error.msg,
-//                 field: error.path,
-//             }
-//         default:
-//             return {
-//                 message: error.msg,
-//                 field: 'unknown',
-//             }
-//     }
-// }

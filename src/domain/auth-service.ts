@@ -7,6 +7,7 @@ import {LoginInputModel} from "../models/auth-models/auth-models";
 import {v4 as uuidv4} from 'uuid'
 import {add} from 'date-fns/add'
 import {emailManager} from "../managers/email-manager";
+import { WithId} from "mongodb";
 
 
 export const authService = {
@@ -40,7 +41,6 @@ export const authService = {
             return true
         }
         catch (error) {
-            console.log(error)
             return false
         }
     },
@@ -94,14 +94,13 @@ export const authService = {
             return null
         }
         
-        // return createResult
     },
 
-    async checkCredentials(body: LoginInputModel) {
+    async checkCredentials(body: LoginInputModel): Promise<WithId<UserDbModel> | null> {
         const user = await usersRepository.findByLoginOrEmail(body.loginOrEmail)
         if (!user) return null
-        if (!user.emailConfirmation.isConfirmed) return null
         const compare = await bcrypt.compare(body.password, user.accountData.passwordHash)
+        
         if (compare) {
             return user
         }
