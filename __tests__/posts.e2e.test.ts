@@ -1,9 +1,12 @@
 import request from "supertest";
-import {app, HTTP_STATUSES, RouterPaths} from "../setting";
-import {CreatePostInputModel, UpdatePostModel} from "../models/posts-models/posts-models";
-import {postsTestManager} from "./postsTestManager";
-import {CreateBlogInputModel} from "../models/blogs-models/blog-models";
-import {blogsTestManager} from "./blogsTestManager";
+import {app, HTTP_STATUSES, SETTINGS,} from "../src/setting";
+import {CreatePostInputModel, UpdatePostModel} from "../src/models/posts-models/posts-models";
+import {CreateBlogInputModel} from "../src/models/blogs-models/blog-models";
+// @ts-ignore
+import {blogsTestManager} from "/test-helpers";
+// @ts-ignore
+import {postsTestManager} from "/test-helpers";
+
 
 describe('test for /posts', () => {
     beforeAll(async () => {
@@ -12,7 +15,7 @@ describe('test for /posts', () => {
 
     it('should return 200 and empty array', async () => {
         await request(app)
-            .get(RouterPaths.posts)
+            .get(SETTINGS.PATH.POSTS)
             .expect(HTTP_STATUSES.OK_200, {
                 pagesCount: 0,
                 page: 1,
@@ -23,7 +26,7 @@ describe('test for /posts', () => {
 
     it('should return 404 for not existing post', async () => {
         await request(app)
-            .get(`${RouterPaths.posts}/123`)
+            .get(`${SETTINGS.PATH.POSTS}/123`)
             .expect(HTTP_STATUSES.NOT_FOUND_404)
     });
 
@@ -39,7 +42,7 @@ describe('test for /posts', () => {
 
 
         await request(app)
-            .get(RouterPaths.posts)
+            .get(SETTINGS.PATH.POSTS)
             .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     });
 
@@ -63,7 +66,7 @@ describe('test for /posts', () => {
         createdPost = createdPostManager
 
         const res = await request(app)
-            .get(RouterPaths.posts)
+            .get(SETTINGS.PATH.POSTS)
             expect(res.body).toEqual({
                 pagesCount: expect.any(Number),
                 page: expect.any(Number),
@@ -83,7 +86,7 @@ describe('test for /posts', () => {
         }
 
         await request(app)
-            .put(`${RouterPaths.blogs}/${createdPost.id}`)
+            .put(`${SETTINGS.PATH.BLOGS}/${createdPost.id}`)
             .auth('admin', 'qwerty')
             .send(data)
             .expect(HTTP_STATUSES.BAD_REQUEST_400)
@@ -104,7 +107,7 @@ describe('test for /posts', () => {
             }
 
             await request(app)
-                .put(`${RouterPaths.posts}/-1`)
+                .put(`${SETTINGS.PATH.POSTS}/-1`)
                 .auth('admin', 'qwerty')
                 .send(data)
                 .expect(HTTP_STATUSES.NOT_FOUND_404)
@@ -126,7 +129,7 @@ describe('test for /posts', () => {
 
 
             await request(app)
-                .get(`${RouterPaths.posts}/${createdPost.id}`)
+                .get(`${SETTINGS.PATH.POSTS}/${createdPost.id}`)
                 .expect(HTTP_STATUSES.OK_200, {
                     ...createdPost,
                     title: data.title,
@@ -139,17 +142,17 @@ describe('test for /posts', () => {
 
         it('should delete both post', async () => {
             await request(app)
-                .delete(`${RouterPaths.posts}/${createdPost.id}`)
+                .delete(`${SETTINGS.PATH.POSTS}/${createdPost.id}`)
                 .auth('admin', 'qwerty')
                 .expect(HTTP_STATUSES.NO_CONTENT_204)
 
             await request(app)
-                .delete(`${RouterPaths.posts}/${createdPost.id}`)
+                .delete(`${SETTINGS.PATH.POSTS}/${createdPost.id}`)
                 .auth('admin', 'qwerty')
                 .expect(HTTP_STATUSES.NOT_FOUND_404)
 
             await request(app)
-                .get(RouterPaths.posts)
+                .get(SETTINGS.PATH.POSTS)
                 .expect(HTTP_STATUSES.OK_200,  {
                     pagesCount: 0,
                     page: 1,

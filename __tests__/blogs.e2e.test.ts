@@ -1,6 +1,6 @@
 import request from "supertest";
-import {app, HTTP_STATUSES, RouterPaths} from "../setting";
-import {CreateBlogInputModel, UpdateBlogModel} from "../models/blogs-models/blog-models";
+import {app, HTTP_STATUSES, SETTINGS} from "../src/setting";
+import {CreateBlogInputModel, UpdateBlogModel} from "../src/models/blogs-models/blog-models";
 // @ts-ignore
 import {blogsTestManager} from "./blogsTestManager";
 
@@ -11,7 +11,7 @@ describe('test for /blogs', () => {
 
     it('should return 200 and empty array', async () => {
         await request(app)
-            .get(RouterPaths.blogs)
+            .get(SETTINGS.PATH.BLOGS)
             .expect(HTTP_STATUSES.OK_200, {
                 pagesCount: 0,
                 page: 1,
@@ -22,7 +22,7 @@ describe('test for /blogs', () => {
 
     it('should return 404 for not existing blog', async () => {
         await request(app)
-            .get(`${RouterPaths.blogs}/123`)
+            .get(`${SETTINGS.PATH.BLOGS}/123`)
             .expect(HTTP_STATUSES.NOT_FOUND_404)
     });
 
@@ -37,7 +37,7 @@ describe('test for /blogs', () => {
 
 
         await request(app)
-            .get(RouterPaths.blogs)
+            .get(SETTINGS.PATH.BLOGS)
             .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     });
 
@@ -52,7 +52,7 @@ describe('test for /blogs', () => {
         const {createdBlogManager} = await blogsTestManager.createBlog(data, HTTP_STATUSES.CREATED_201)
         createdBlog = createdBlogManager
         await request(app)
-            .get(RouterPaths.blogs)
+            .get(SETTINGS.PATH.BLOGS)
             .expect(HTTP_STATUSES.OK_200, {
                 pagesCount: 1, // захардкодил, как сделать правильно?
                 page: 1,
@@ -71,14 +71,14 @@ describe('test for /blogs', () => {
         }
 
         await request(app)
-            .put(`${RouterPaths.blogs}/${createdBlog.id}`)
+            .put(`${SETTINGS.PATH.BLOGS}/${createdBlog.id}`)
             .auth('admin', 'qwerty')
             .send(data)
             .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
 
         await request(app)
-            .get(`${RouterPaths.blogs}/${createdBlog.id}`)
+            .get(`${SETTINGS.PATH.BLOGS}/${createdBlog.id}`)
             .expect(HTTP_STATUSES.OK_200, createdBlog)
 
     });
@@ -91,7 +91,7 @@ describe('test for /blogs', () => {
             }
 
             await request(app)
-                .put(`${RouterPaths.blogs}/-1`)
+                .put(`${SETTINGS.PATH.BLOGS}/-1`)
                 .auth('admin', 'qwerty')
                 .send(data)
                 .expect(HTTP_STATUSES.NOT_FOUND_404)
@@ -105,14 +105,14 @@ describe('test for /blogs', () => {
                 }
 
                 await request(app)
-                    .put(`${RouterPaths.blogs}/${createdBlog.id}`)
-                    .auth('admin', 'qwerty')
+                    .put(`${SETTINGS.PATH.BLOGS}/${createdBlog.id}`)
+                    // .auth('admin', 'qwerty')
                     .send(data)
                     .expect(HTTP_STATUSES.OK_200)
 
 
                 await request(app)
-                    .get(`${RouterPaths.blogs}/${createdBlog.id}`)
+                    .get(`${SETTINGS.PATH.BLOGS}/${createdBlog.id}`)
                     .expect(HTTP_STATUSES.OK_200, {
                         ...createdBlog,
                         name: data.name,
@@ -124,17 +124,17 @@ describe('test for /blogs', () => {
 
     it('should delete both blog', async () => {
         await request(app)
-            .delete(`${RouterPaths.blogs}/${createdBlog.id}`)
+            .delete(`${SETTINGS.PATH.BLOGS}/${createdBlog.id}`)
             .auth('admin', 'qwerty')
             .expect(HTTP_STATUSES.NO_CONTENT_204)
 
         await request(app)
-            .delete(`${RouterPaths.blogs}/${createdBlog.id}`)
+            .delete(`${SETTINGS.PATH.BLOGS}/${createdBlog.id}`)
             .auth('admin', 'qwerty')
             .expect(HTTP_STATUSES.NOT_FOUND_404)
 
         await request(app)
-            .get(RouterPaths.blogs)
+            .get(SETTINGS.PATH.BLOGS)
             .expect(HTTP_STATUSES.OK_200, {
                 pagesCount: 0,
                 page: 1,

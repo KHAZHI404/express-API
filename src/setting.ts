@@ -8,27 +8,33 @@ import {authRouter} from "./routes/auth-router";
 import {emailRouter} from "./routes/email-router";
 import cookieParser from "cookie-parser";
 
-export const RouterPaths = {
-    blogs: '/blogs',
-    posts: '/posts',
-    testing: '/testing',
-    users: '/users',
-    comments: '/comments',
-    auth: '/auth',
-    email: '/email',
+export const SETTINGS = {
+    PORT: process.env.PORT || 3003,
+    MONGO_URI: process.env.MONGO_URL || "mongodb://0.0.0.0:27017/?maxPoolSize=20&w=majority",
+    JWT_SECRET: process.env.JWT_SECRET || "123",
+    PATH: {
+        BLOGS: '/blogs',
+        POSTS: '/posts',
+        TESTING: '/testing',
+        USERS: '/users',
+        COMMENTS: '/comments',
+        AUTH: '/auth',
+        EMAIL: '/email',
+
+    }
 }
 export const app = express()
 
 const bodyParser = express.json()
 app.use(cookieParser())
 app.use(bodyParser)
-app.use(RouterPaths.blogs, blogsRouter)
-app.use(RouterPaths.posts, postsRouter)
-app.use(RouterPaths.testing, testingRouter)
-app.use(RouterPaths.users, usersRouter)
-app.use(RouterPaths.comments, commentsRouter)
-app.use(RouterPaths.auth, authRouter)
-app.use(RouterPaths.email, emailRouter)
+app.use(SETTINGS.PATH.BLOGS, blogsRouter)
+app.use(SETTINGS.PATH.POSTS, postsRouter)
+app.use(SETTINGS.PATH.TESTING, testingRouter)
+app.use(SETTINGS.PATH.USERS, usersRouter)
+app.use(SETTINGS.PATH.COMMENTS, commentsRouter)
+app.use(SETTINGS.PATH.AUTH, authRouter)
+app.use(SETTINGS.PATH.EMAIL, emailRouter)
 
 
 export const HTTP_STATUSES = {
@@ -41,7 +47,3 @@ export const HTTP_STATUSES = {
     NOT_AUTHORIZED_401: 401,
 }
 
-export const settings = {
-    MONGO_URI: process.env.MONGO_URL || "mongodb://0.0.0.0:27017/?maxPoolSize=20&w=majority",
-    JWT_SECRET: process.env.JWT_SECRET || "123"
-}
