@@ -1,6 +1,6 @@
 import {WithId} from "mongodb";
 
-export type BlogDbModel = {
+export type BlogDbType = {
     name: string
     description: string
     websiteUrl: string
@@ -8,19 +8,13 @@ export type BlogDbModel = {
     isMembership: boolean
 }
 
-export type CreateBlogInputModel = {
+export type InputBlogType = {
     name: string
     description: string
     websiteUrl: string
 }
 
-export type UpdateBlogModel = {
-    name: string
-    description: string
-    websiteUrl: string
-}
-
-export type BlogViewModel = {
+export type OutputBlogType = {
     id: string
     name: string
     description: string
@@ -29,15 +23,15 @@ export type BlogViewModel = {
     isMembership: boolean
 }
 
-export type Paginator<BlogViewModel> = {
+export type Paginator<OutputBlogsType> = {
     pagesCount: number
     page: number
     pageSize: number
     totalCount: number
-    items:	BlogViewModel[]
+    items:	OutputBlogsType[]
 }
 
-export const blogMapper = (blog: WithId<BlogDbModel>): BlogViewModel => {
+export const blogMapper = (blog: WithId<BlogDbType>): OutputBlogType => {
     return {
         id: blog._id.toString(),
         name: blog.name,

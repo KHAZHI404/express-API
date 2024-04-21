@@ -1,16 +1,16 @@
 import {postsCollection} from "../db/db";
-import {PostDbModel, postMapper, PostViewModel, UpdatePostModel} from "../models/posts-models/posts-models";
 import {InsertOneResult, ObjectId} from "mongodb";
+import {InputPostType, OutputPostType, PostDbType, postMapper} from "../input-output-types/posts-types";
 
 
 export const postsRepository = {
 
-    async createPost(newPost: PostDbModel): Promise<PostViewModel> {
-        const result: InsertOneResult<PostDbModel> = await postsCollection.insertOne({...newPost})
+    async createPost(newPost: PostDbType): Promise<OutputPostType> {
+        const result: InsertOneResult<PostDbType> = await postsCollection.insertOne({...newPost})
         return postMapper({_id: result.insertedId, ...newPost})
     },
 
-    async updatePost(postId: string, body: UpdatePostModel) {
+    async updatePost(postId: string, body: InputPostType) {
         if(!ObjectId.isValid(postId)) return false
 
         const result = await postsCollection.updateOne({_id: new ObjectId(postId)}, {

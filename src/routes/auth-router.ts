@@ -1,7 +1,7 @@
 import {Request, Response, Router} from "express";
 import {authService} from "../domain/auth-service";
 import {HTTP_STATUSES} from "../setting";
-import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
+import {inputCheckErrorsMiddleware} from "../middlewares/input-validation-middleware";
 import {jwtService} from "../application/jwt-service";
 import {bearerAuth} from "../middlewares/auth-middleware";
 import {validateAuthorization} from "../models/auth-models/auth-validate";
@@ -9,16 +9,14 @@ import {usersQueryRepository} from "../query-repositories/users-query-repository
 import {authRegistrationValidation, emailResendingValidation} from "../middlewares/userAlreadyExist";
 import { confirmationValidation } from "../middlewares/code-validation";
 import { blacklistTokens } from "../db/db";
-import { validateToken } from "../middlewares/token-validation";
 import { verifyTokenInCookie } from "../middlewares/verifyTokenInCookie";
-import { verifyTokenInBody } from "../middlewares/verifyTokenInBody";
 
 
 export const authRouter = Router()
 
 authRouter.post('/login',
     validateAuthorization(),
-    inputValidationMiddleware,
+    inputCheckErrorsMiddleware,
     async (req: Request, res: Response): Promise<void>  => {
 
         const user: any  = await authService.checkCredentials(req.body)
@@ -54,7 +52,7 @@ authRouter.post('/refresh-token',
  
 authRouter.post('/auth/logout', 
     verifyTokenInCookie,
-    inputValidationMiddleware,
+    inputCheckErrorsMiddleware,
         async (req: Request, res: Response) => {
         const refreshToken = req.cookies.refreshToken;
         const decodedRefreshToken = await jwtService.verifyRefreshToken(refreshToken);

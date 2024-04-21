@@ -1,15 +1,15 @@
 import {postsRepository} from "../repositories/posts-repository";
-import {BlogViewModel} from "../models/blogs-models/blog-models";
-import {CreatePostInputModel, PostDbModel, PostViewModel, UpdatePostModel} from "../models/posts-models/posts-models";
 import {blogsQueryRepository} from "../query-repositories/blogs-query-repository";
+import {InputPostType, OutputPostType, PostDbType} from "../input-output-types/posts-types";
+import {OutputBlogType} from "../input-output-types/blogs-types";
 
 
 export const postsService = {
 
-    async createPost(inputData: CreatePostInputModel): Promise<PostViewModel | null> {
-        const blog: BlogViewModel | null = await blogsQueryRepository.findBlogById(inputData.blogId)
+    async createPost(inputData: InputPostType): Promise<OutputPostType | null> {
+        const blog: OutputBlogType | null = await blogsQueryRepository.findBlogById(inputData.blogId)
         if (!blog) return null
-        const newPost: PostDbModel = {
+        const newPost: PostDbType = {
             title: inputData.title,
             shortDescription: inputData.shortDescription,
             content: inputData.content,
@@ -20,7 +20,7 @@ export const postsService = {
         return await postsRepository.createPost(newPost)
     },
 
-    async updatePost(postId: string, body: UpdatePostModel) {
+    async updatePost(postId: string, body: InputPostType) {
         return postsRepository.updatePost(postId, body)
     },
 

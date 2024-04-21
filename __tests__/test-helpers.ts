@@ -1,16 +1,18 @@
-import request from "supertest";
-import {app, HTTP_STATUSES, SETTINGS} from "../src/setting";
-import {CreateBlogInputModel} from "../src/models/blogs-models/blog-models";
-import {CreatePostInputModel} from "../src/models/posts-models/posts-models";
+import {app} from '../src/app'
+import {agent} from 'supertest'
+export const req = agent(app)
+import {HTTP_STATUSES, SETTINGS} from "../src/setting";
+import {inputBlogType} from "../src/input-output-types/blogs-types";
+import {InputPostType} from "../src/input-output-types/posts-types";
 
 
 type HttpKeys = keyof typeof HTTP_STATUSES
 type HttpStatusType = (typeof HTTP_STATUSES)[HttpKeys];
 
 export const blogsTestManager = {
-    async createBlog(data: CreateBlogInputModel, expectedStatus: HttpStatusType) {
+    async createBlog(data: inputBlogType, expectedStatus: HttpStatusType) {
 
-        const responce = await request(app)
+        const responce = await req
             .post(SETTINGS.PATH.BLOGS)
             .auth('admin', 'qwerty')
             .send(data)
@@ -37,9 +39,9 @@ export const blogsTestManager = {
 
 
 export const postsTestManager = {
-    async createPost(data: CreatePostInputModel, expectedStatus: HttpStatusType) {
+    async createPost(data: InputPostType, expectedStatus: HttpStatusType) {
 
-        const responce = await request(app)
+        const responce = await req
             .post(SETTINGS.PATH.POSTS)
             .auth('admin', 'qwerty')
             .send(data)

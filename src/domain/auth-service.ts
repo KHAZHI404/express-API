@@ -1,13 +1,13 @@
 import bcrypt from 'bcryptjs'
 // import bcrypt from 'bcrypt' //ошибка на bcrypt
-import {CreateUserInputModel, UserDbModel, UserViewModel} from "../models/users-models/users-models";
 import {usersRepository} from "../repositories/users-repository";
 import {ObjectId} from "mongodb";
-import {LoginInputModel} from "../models/auth-models/auth-models";
 import {v4 as uuidv4} from 'uuid'
 import {add} from 'date-fns/add'
 import {emailManager} from "../managers/email-manager";
 import { WithId} from "mongodb";
+import {InputUserType, UserDbType} from "../input-output-types/users-types";
+import {LoginInputModel} from "../input-output-types/auth-types";
 
 
 export const authService = {
@@ -45,11 +45,11 @@ export const authService = {
         }
     },
 
-    async createUserAccount(inputData: CreateUserInputModel): Promise<null | boolean> {
+    async createUserAccount(inputData: InputUserType): Promise<null | boolean> {
         const userByEmail = await usersRepository.findByLoginOrEmail(inputData.login)
         if (userByEmail) return false
         const passwordHash = await bcrypt.hash(inputData.password, 10)
-        const user: UserDbModel = {
+        const user: UserDbType = {
             _id: new ObjectId(),
             accountData: {
                 userName: inputData.login,
@@ -96,7 +96,7 @@ export const authService = {
         
     },
 
-    async checkCredentials(body: LoginInputModel): Promise<WithId<UserDbModel> | null> {
+    async checkCredentials(body: LoginInputModel): Promise<WithId<UserDbType> | null> {
         const user = await usersRepository.findByLoginOrEmail(body.loginOrEmail)
         if (!user) return null
         const compare = await bcrypt.compare(body.password, user.accountData.passwordHash)

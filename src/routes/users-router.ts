@@ -1,7 +1,7 @@
 import {Request, Response, Router} from "express";
 import {HTTP_STATUSES} from "../setting";
 import {usersQueryRepository} from "../query-repositories/users-query-repository";
-import {inputValidationMiddleware} from "../middlewares/input-validation-middleware";
+import {inputCheckErrorsMiddleware} from "../middlewares/input-validation-middleware";
 import {validateUsers} from "../models/users-models/users-validate";
 import {basicAuth} from "../middlewares/auth-middleware";
 import {getPageOptions} from "../types/types";
@@ -26,7 +26,7 @@ usersRouter.get('/',
 usersRouter.post('/',
     basicAuth,
     validateUsers(),
-    inputValidationMiddleware,
+    inputCheckErrorsMiddleware,
     async (req: Request, res: Response): Promise<void> => {
     const newUser = await userService.createUser(req.body)
     res.status(HTTP_STATUSES.CREATED_201).send(newUser)

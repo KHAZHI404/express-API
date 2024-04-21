@@ -1,7 +1,7 @@
-import {BlogDbModel, blogMapper, BlogViewModel, Paginator} from "../models/blogs-models/blog-models";
 import {blogsCollection, postsCollection} from "../db/db";
 import {ObjectId, WithId} from "mongodb";
-import {postMapper} from "../models/posts-models/posts-models";
+import {BlogDbType, blogMapper, OutputBlogType, Paginator} from "../input-output-types/blogs-types";
+import {postMapper} from "../input-output-types/posts-types";
 
 export const blogsQueryRepository = {
 
@@ -9,7 +9,7 @@ export const blogsQueryRepository = {
                     pageSize: number,
                     sortBy: string,
                     sortDirection: string,
-                    searchNameTerm: string | null,): Promise<Paginator<BlogViewModel>> {
+                    searchNameTerm: string | null,): Promise<Paginator<OutputBlogType>> {
 
         let searchNameFilter = {}
         if (searchNameTerm) {
@@ -77,9 +77,9 @@ export const blogsQueryRepository = {
         }
     },
 
-    async findBlogById(id: string): Promise<BlogViewModel | null> {
+    async findBlogById(id: string): Promise<OutputBlogType | null> {
         if (!ObjectId.isValid(id)) return null
-        const blog: WithId<BlogDbModel> | null = await blogsCollection.findOne(
+        const blog: WithId<BlogDbType> | null = await blogsCollection.findOne(
             {_id: new ObjectId(id)})
         return blog ? blogMapper(blog) : null
     },

@@ -36,6 +36,6 @@ export const alreadyConfirm = body('code').custom(async (code) => {
 
 
 
-        export type TokenDbModel = {
+        export type TokenDbType = {
             accessToken: string
         }

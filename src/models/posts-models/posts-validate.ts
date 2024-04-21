@@ -1,7 +1,7 @@
 import {body} from "express-validator";
 import {blogsQueryRepository} from "../../query-repositories/blogs-query-repository";
 
-export const validatePosts = () => [
+export const postInputValidators = () => [
     body('title')
         .isString()
         .trim()

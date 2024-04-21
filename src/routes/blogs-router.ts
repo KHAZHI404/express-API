@@ -1,13 +1,13 @@
 import {Request, Response, Router} from "express";
 import {HTTP_STATUSES} from "../setting";
-import {inputValidationMiddleware} from '../middlewares/input-validation-middleware'
+import {inputCheckErrorsMiddleware} from '../middlewares/input-validation-middleware'
 import {blogsService} from "../domain/blogs-service";
-import {BlogViewModel, Paginator} from "../models/blogs-models/blog-models";
 import {postsService} from "../domain/posts-service";
 import {blogsQueryRepository} from "../query-repositories/blogs-query-repository";
 import {validateBlogs, validatePostsInBlog} from "../models/blogs-models/blog-validate";
 import {basicAuth} from "../middlewares/auth-middleware";
 import {getPageOptions} from "../types/types";
+import {OutputBlogType, Paginator} from "../input-output-types/blogs-types";
 
 export const blogsRouter = Router({})
 
@@ -16,20 +16,20 @@ blogsRouter.get('/',
     const { pageNumber, pageSize, sortBy, sortDirection } = getPageOptions(req.query);
     const searchNameTerm = req.query.searchNameTerm ? req.query.searchNameTerm.toString() : null
 
-    const foundBlogs: Paginator<BlogViewModel> = await blogsQueryRepository.findBlogs(pageNumber, pageSize,
+    const foundBlogs: Paginator<OutputBlogType> = await blogsQueryRepository.findBlogs(pageNumber, pageSize,
          sortBy, sortDirection, searchNameTerm)
     res.send(foundBlogs)
 })
 
 blogsRouter.get('/:blogId',
     async (req: Request, res: Response): Promise<void> => {
-    const foundBlog: BlogViewModel | null = await blogsQueryRepository.findBlogById(req.params.blogId)
+    const foundBlog: OutputBlogType | null = await blogsQueryRepository.findBlogById(req.params.blogId)
     foundBlog ? res.status(HTTP_STATUSES.OK_200).send(foundBlog) : res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
 })
 
 blogsRouter.get('/:blogId/posts',
     async (req: Request, res: Response): Promise<void> => {
-    const foundBlog: BlogViewModel | null = await blogsQueryRepository.findBlogById(req.params.blogId)
+    const foundBlog: OutputBlogType | null = await blogsQueryRepository.findBlogById(req.params.blogId)
     if (!foundBlog) {
         res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
         return
@@ -47,7 +47,7 @@ blogsRouter.get('/:blogId/posts',
 blogsRouter.post('/',
     basicAuth,
     validateBlogs(),
-    inputValidationMiddleware,
+    inputCheckErrorsMiddleware,
     async (req: Request, res: Response): Promise<void> => {
         const newBlog = await blogsService.createBlog(req.body)
         res.status(HTTP_STATUSES.CREATED_201).send(newBlog)
@@ -56,7 +56,7 @@ blogsRouter.post('/',
 blogsRouter.post('/:blogId/posts',
     basicAuth,
     validatePostsInBlog(),
-    inputValidationMiddleware,
+    inputCheckErrorsMiddleware,
     async (req: Request, res: Response) => {
         const newPost = await postsService.createPost({blogId: req.params.blogId, ...req.body})
         if (!newPost) {
@@ -69,7 +69,7 @@ blogsRouter.post('/:blogId/posts',
 blogsRouter.put('/:blogId',
     basicAuth,
     validateBlogs(),
-    inputValidationMiddleware,
+    inputCheckErrorsMiddleware,
     async (req: Request, res: Response): Promise<void> => {
         const blogId = req.params.blogId
         const isUpdated = await blogsService.updateBlog(blogId, req.body)

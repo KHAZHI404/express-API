@@ -1,10 +1,10 @@
 import {body} from "express-validator";
-import {UserDbModel} from "../models/users-models/users-models";
 import {usersRepository} from "../repositories/users-repository";
 import {inputValidationMiddleware} from "./input-validation-middleware";
+import {UserDbType} from "../input-output-types/users-types";
 
 export const uniqueEmailValidator = body('email').custom(async (body) => {
-    const userByEmail: UserDbModel | null = await usersRepository.findByLoginOrEmail(body);
+    const userByEmail: UserDbType | null = await usersRepository.findByLoginOrEmail(body);
     if (userByEmail) {
         throw new Error('User already exists');
     }
@@ -12,7 +12,7 @@ export const uniqueEmailValidator = body('email').custom(async (body) => {
 });
 
 export const uniqueLoginValidator = body('login').custom(async (body) => {
-    const userByLogin: UserDbModel | null = await usersRepository.findByLoginOrEmail(body);
+    const userByLogin: UserDbType | null = await usersRepository.findByLoginOrEmail(body);
     if (userByLogin) {
         throw new Error('User already exists');
     }
@@ -20,7 +20,7 @@ export const uniqueLoginValidator = body('login').custom(async (body) => {
 });
 
 export const emailConfirmed = body('email').custom(async (body) => {
-    const userByEmail: UserDbModel | null = await usersRepository.findByLoginOrEmail(body);
+    const userByEmail: UserDbType | null = await usersRepository.findByLoginOrEmail(body);
     if (userByEmail?.emailConfirmation.isConfirmed) {
         throw new Error('Email confirmed');
     }
@@ -28,7 +28,7 @@ export const emailConfirmed = body('email').custom(async (body) => {
 });
 
 export const emailExist = body('email').custom(async (body) => {
-    const userByEmail: UserDbModel | null = await usersRepository.findByLoginOrEmail(body);
+    const userByEmail: UserDbType | null = await usersRepository.findByLoginOrEmail(body);
     if (!userByEmail) {
         throw new Error('User doesnt exists');
     }

@@ -1,5 +1,6 @@
 import {runDb} from "./db/db";
-import {app, SETTINGS} from "./setting";
+import {app} from "./app";
+import {SETTINGS} from "./setting";
 
 
 const startApp = async () => {
@@ -8,4 +9,4 @@ const startApp = async () => {
         console.log('...server started')
     })
 }
-// startApp()
+startApp()

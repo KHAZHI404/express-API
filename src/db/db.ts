@@ -1,10 +1,10 @@
-import {BlogDbModel} from "../models/blogs-models/blog-models";
-import {PostDbModel} from "../models/posts-models/posts-models";
+import {BlogDbType} from "../input-output-types/blogs-types";
 import {MongoClient} from "mongodb";
 import {config} from 'dotenv'
-import {UserDbModel} from "../models/users-models/users-models";
-import {CommentDbModel} from "../models/comments-model/comments-models";
-import { TokenDbModel } from "../models/auth-models/auth-models";
+import {PostDbType} from "../input-output-types/posts-types";
+import {UserDbType} from "../input-output-types/users-types";
+import {CommentDbType} from "../input-output-types/comments-types";
+import {TokenDbType} from "../middlewares/token-validation";
 
 config()
 
@@ -19,17 +19,17 @@ const client = new MongoClient(url);
 
 
 const mongoDb = client.db('social-network')
-export const blogsCollection = mongoDb.collection<BlogDbModel>('blogs')
-export const postsCollection = mongoDb.collection<PostDbModel>('posts')
-export const usersCollection = mongoDb.collection<UserDbModel>('users')
-export const commentsCollection = mongoDb.collection<CommentDbModel>('comments')
-export const blacklistTokens = mongoDb.collection<TokenDbModel>('tokens')
+export const blogsCollection = mongoDb.collection<BlogDbType>('blogs')
+export const postsCollection = mongoDb.collection<PostDbType>('posts')
+export const usersCollection = mongoDb.collection<UserDbType>('users')
+export const commentsCollection = mongoDb.collection<CommentDbType>('comments')
+export const blacklistTokens = mongoDb.collection<TokenDbType>('tokens')
 
 
 export async function runDb () {
     try {
         await client.connect()
-        console.log('Connected successfully to server')
+        console.log('Connected successfully to mongoserver')
     } catch (e) {
         console.log(`Don't connected`)
         await client.close()

@@ -5,7 +5,7 @@ export type CommentatorInfo = {
     userLogin: string
 }
 
-export type CommentDbModel = {
+export type CommentDbType = {
     content: string
     commentatorInfo: CommentatorInfo
     createdAt: string
@@ -19,13 +19,13 @@ export type CommentWidthPostModel = {
     createdAt: string
 }
 
-export type CommentViewModel = {
+export type OutputCommentType = {
     id: string
     content: string
     commentatorInfo: CommentatorInfo
     createdAt: string
 }
-export const commentMapper = (comment: WithId<CommentDbModel>): CommentViewModel => {
+export const commentMapper = (comment: WithId<CommentDbType>): OutputCommentType => {
     return {
         id: comment._id.toString(),
         content: comment.content,

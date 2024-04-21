@@ -4,7 +4,7 @@ import {FieldError} from "../types/types";
 import {HTTP_STATUSES} from "../setting";
 
 
-export const inputValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export const inputCheckErrorsMiddleware = (req: Request, res: Response, next: NextFunction) => {
     // const errorsFormatter = (error: ValidationError): FieldError => {
     const errors = validationResult(req).formatWith(error => {
         switch (error.type) {

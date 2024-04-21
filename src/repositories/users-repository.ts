@@ -1,6 +1,6 @@
-import {UserDbModel, userMapper, UserViewModel} from "../models/users-models/users-models";
 import {usersCollection} from "../db/db";
 import {InsertOneResult, ObjectId, WithId} from "mongodb";
+import {OutputUserType, UserDbType, userMapper} from "../input-output-types/users-types";
 
 
 export const usersRepository = {
@@ -36,8 +36,8 @@ export const usersRepository = {
         return user ? user : null
     },
 
-    async createUser(user: UserDbModel): Promise<UserViewModel> {
-        const result: InsertOneResult<UserDbModel> = await usersCollection.insertOne({...user})
+    async createUser(user: UserDbType): Promise<OutputUserType> {
+        const result: InsertOneResult<UserDbType> = await usersCollection.insertOne({...user})
         return userMapper({...user})
     },
 
@@ -47,7 +47,7 @@ export const usersRepository = {
         return product ? product : null
     },
 
-    async findByLoginOrEmail(loginOrEmail: string): Promise<WithId<UserDbModel> | null> {
+    async findByLoginOrEmail(loginOrEmail: string): Promise<WithId<UserDbType> | null> {
         const user = await usersCollection.findOne({ $or: [ { "accountData.email": loginOrEmail }, { "accountData.userName": loginOrEmail } ] } )
         return user
     },

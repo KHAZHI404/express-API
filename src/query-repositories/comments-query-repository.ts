@@ -2,14 +2,14 @@ import {WithId} from "mongodb";
 import { ObjectId } from 'mongodb';
 
 import {commentsCollection} from "../db/db";
-import {CommentDbModel, commentMapper} from "../models/comments-model/comments-models";
+import {CommentDbType, commentMapper} from "../input-output-types/comments-types";
 
 
 export const commentsQueryRepository = {
 
     async getCommentById(id: string) {
         if (!ObjectId.isValid(id)) return null // что с тобой не так?
-        const comment: WithId<CommentDbModel> | null = await commentsCollection.findOne(
+        const comment: WithId<CommentDbType> | null = await commentsCollection.findOne(
             {_id: new ObjectId(id)})
         return comment ? commentMapper(comment) : null
     },

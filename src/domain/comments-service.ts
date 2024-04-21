@@ -1,16 +1,16 @@
 import {commentsRepository} from "../repositories/comments-repository";
-import {CommentDbModel, CommentViewModel} from "../models/comments-model/comments-models";
-import {PostViewModel} from "../models/posts-models/posts-models";
 import {postsQueryRepository} from "../query-repositories/posts-query-repository";
+import {OutputPostType} from "../input-output-types/posts-types";
+import {CommentDbType, OutputCommentType} from "../input-output-types/comments-types";
 
 
 export const commentsService = {
 
-    async createComment(userData: {userId: string, userLogin: string}, postId: string, content: string): Promise<CommentViewModel | null> {
+    async createComment(userData: {userId: string, userLogin: string}, postId: string, content: string): Promise<OutputCommentType | null> {
 
-        const post: PostViewModel | null = await postsQueryRepository.findPostById(postId)
+        const post: OutputPostType | null = await postsQueryRepository.findPostById(postId)
         if (!post) return null
-        const newComment: CommentDbModel = {
+        const newComment: CommentDbType = {
             postId: postId,
             content: content,
             commentatorInfo: {
@@ -23,7 +23,7 @@ export const commentsService = {
         return await commentsRepository.createComment(newComment)
     },
 
-    async updateComment(id: string, body: CommentDbModel) {
+    async updateComment(id: string, body: CommentDbType) {
         return await commentsRepository.updateComment(id, body)
     },
 

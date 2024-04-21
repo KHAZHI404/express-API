@@ -1,9 +1,9 @@
 import {usersRepository} from "../repositories/users-repository";
-import {CreateUserInputModel, UserDbModel, userMapper, UserViewModel} from "../models/users-models/users-models";
 import bcrypt from "bcryptjs";
 import {ObjectId} from "mongodb";
 import {add} from "date-fns/add";
 import {v4 as uuidv4} from "uuid"
+import {InputUserType, OutputUserType, UserDbType, userMapper} from "../input-output-types/users-types";
 
 export const userService = {
 
@@ -13,9 +13,9 @@ export const userService = {
         return userMapper(user)
     },
 
-    async createUser(body: CreateUserInputModel): Promise<UserViewModel> {
+    async createUser(body: InputUserType): Promise<OutputUserType> {
         const passwordHash = await bcrypt.hash(body.password, 10)
-        const newUser: UserDbModel = {
+        const newUser: UserDbType = {
             _id: new ObjectId(),
             accountData: {
                 "userName": body.login,

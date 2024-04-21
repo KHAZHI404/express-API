@@ -1,19 +1,19 @@
 import {Request, Response, Router} from "express";
 import {HTTP_STATUSES} from "../setting";
-import {inputValidationMiddleware} from '../middlewares/input-validation-middleware'
-import {BlogViewModel} from "../models/blogs-models/blog-models";
+import {inputCheckErrorsMiddleware} from '../middlewares/input-validation-middleware'
 import {postsService} from "../domain/posts-service";
-import {PostViewModel} from "../models/posts-models/posts-models";
 import {postsQueryRepository} from "../query-repositories/posts-query-repository";
 import {blogsQueryRepository} from "../query-repositories/blogs-query-repository";
 import {basicAuth, bearerAuth} from "../middlewares/auth-middleware";
-import {validatePosts} from "../models/posts-models/posts-validate";
+import {postInputValidators} from "../models/posts-models/posts-validate";
 import {getPageOptions} from "../types/types";
 import {commentsQueryRepository} from "../query-repositories/comments-query-repository";
 import {commentsService} from "../domain/comments-service";
-import {CommentViewModel} from "../models/comments-model/comments-models";
 import {validateComments} from "../models/comments-model/comments-validate";
 import {validateMongoId} from "../middlewares/mongoId-middleware";
+import {OutputPostType} from "../input-output-types/posts-types";
+import {OutputCommentType} from "../input-output-types/comments-types";
+import {OutputBlogType} from "../input-output-types/blogs-types";
 
 export const postsRouter = Router({})
 
@@ -25,16 +25,16 @@ postsRouter.get('/', async (req: Request, res: Response) => {
 })
 
 postsRouter.get('/:postId', async (req: Request, res: Response) => {
-    const foundPost: PostViewModel | null = await postsQueryRepository.findPostById(req.params.postId)
+    const foundPost: OutputPostType | null = await postsQueryRepository.findPostById(req.params.postId)
     foundPost ? res.status(HTTP_STATUSES.OK_200).send(foundPost) : res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
 })
 
 postsRouter.get('/:postId/comments',
     validateMongoId(),
-    inputValidationMiddleware,
+    inputCheckErrorsMiddleware,
     async (req: Request, res: Response): Promise<void> => {
         const postId = req.params.postId
-        const foundPost: PostViewModel | null = await postsQueryRepository.findPostById(postId)
+        const foundPost: OutputPostType | null = await postsQueryRepository.findPostById(postId)
         if (!foundPost) {
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
             return
@@ -52,12 +52,12 @@ postsRouter.get('/:postId/comments',
 postsRouter.post('/:postId/comments',
     bearerAuth,
     validateComments(),
-    inputValidationMiddleware,
+    inputCheckErrorsMiddleware,
     async (req: Request, res: Response) => {
     const {id: userId, login: userLogin} = req.user!
         const postId = req.params.postId
         const content = req.body.content
-        const newComment: CommentViewModel | null = await commentsService.createComment({userId, userLogin}, postId, content)
+        const newComment: OutputCommentType | null = await commentsService.createComment({userId, userLogin}, postId, content)
         if (!newComment) {
             return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
         }
@@ -67,8 +67,8 @@ postsRouter.post('/:postId/comments',
 
 postsRouter.post('/',
     basicAuth,
-    validatePosts(),
-    inputValidationMiddleware,
+    postInputValidators(),
+    inputCheckErrorsMiddleware,
     async (req: Request, res: Response) => {
         const newPost = await postsService.createPost(req.body)
         newPost ? res.status(HTTP_STATUSES.CREATED_201).send(newPost) : res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -76,12 +76,12 @@ postsRouter.post('/',
 
 postsRouter.put('/:postId',
     basicAuth,
-    validatePosts(),
-    inputValidationMiddleware,
+    postInputValidators(),
+    inputCheckErrorsMiddleware,
     async (req: Request, res: Response) => {
         const blogId = req.body.blogId
         const postId = req.params.postId
-        const blogExist: BlogViewModel | null = await blogsQueryRepository.findBlogById(blogId)
+        const blogExist: OutputBlogType | null = await blogsQueryRepository.findBlogById(blogId)
         const postExist = await postsQueryRepository.findPostById(postId)
 
         if (!blogExist) {

@@ -1,8 +1,6 @@
 import {ObjectId, WithId} from "mongodb";
-import {v4 as uuidv4} from "uuid";
-import {add} from "date-fns/add";
 
-export type UserDbModel = {
+export type UserDbType = {
     _id: ObjectId,
     accountData: {
         userName: string,
@@ -13,31 +11,31 @@ export type UserDbModel = {
     emailConfirmation: {
         confirmationCode: string,
         expirationDate: Date,
-isConfirmed: boolean
-}
+        isConfirmed: boolean
+    }
 }
 
-export type CreateUserInputModel = {
+export type InputUserType = {
     login: string
     email: string
     password: string
 }
 
-export type UserViewModel = {
+export type OutputUserType = {
     id: string
     login: string
     email: string
     createdAt: string
 }
 
-export type Paginator<UserViewModel> = {
+export type Paginator<OutputUserType> = {
     pagesCount: number
     page: number
     pageSize: number
     totalCount: number
-    items: [UserViewModel]
+    items: [OutputUserType]
 }
-export const userMapper = (user: WithId<UserDbModel>): UserViewModel => {
+export const userMapper = (user: WithId<UserDbType>): OutputUserType => {
     return {
         id: user._id.toString(),
         login: user.accountData.userName,

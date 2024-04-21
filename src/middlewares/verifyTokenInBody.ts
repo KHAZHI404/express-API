@@ -3,7 +3,7 @@ import { jwtService } from "../application/jwt-service";
 import { HTTP_STATUSES } from "../setting";
 import { blacklistTokens } from "../db/db";
 
-    export const verifyTokenInBody = async (req: Request, res: Response, next: NextFunction) => {
+export const verifyTokenInBody = async (req: Request, res: Response, next: NextFunction) => {
         const refreshToken = req.body.accessToken;
       
         if (!refreshToken) {

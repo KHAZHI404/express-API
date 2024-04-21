@@ -1,15 +1,15 @@
 import {blogsCollection} from "../db/db";
-import {BlogDbModel, blogMapper, BlogViewModel, UpdateBlogModel} from "../models/blogs-models/blog-models";
 import {InsertOneResult, ObjectId} from "mongodb";
+import {BlogDbType, blogMapper, InputBlogType, OutputBlogType} from "../input-output-types/blogs-types";
 
 export const blogsRepository = {
 
-    async createBlog(newBlog: BlogDbModel): Promise<BlogViewModel> {
-        const result: InsertOneResult<BlogDbModel> = await blogsCollection.insertOne({...newBlog})
+    async createBlog(newBlog: BlogDbType): Promise<OutputBlogType> {
+        const result: InsertOneResult<BlogDbType> = await blogsCollection.insertOne({...newBlog})
         return blogMapper({_id: result.insertedId, ...newBlog})
     },
 
-    async updateBlog(id: string, body: UpdateBlogModel ): Promise<boolean> {
+    async updateBlog(id: string, body: InputBlogType ): Promise<boolean> {
         if(!ObjectId.isValid(id)) return false
         const result = await blogsCollection.updateOne({_id: new ObjectId(id)}, {
             $set: {

@@ -1,12 +1,12 @@
 import {InsertOneResult, ObjectId} from "mongodb";
 import {commentsCollection} from "../db/db";
-import {CommentDbModel, commentMapper, CommentViewModel} from "../models/comments-model/comments-models";
+import {CommentDbType, commentMapper, OutputCommentType} from "../input-output-types/comments-types";
 
 
 export const commentsRepository = {
 
-    async createComment(newComment: CommentDbModel): Promise<CommentViewModel> {
-        const result: InsertOneResult<CommentDbModel> = await commentsCollection.insertOne({...newComment})
+    async createComment(newComment: CommentDbType): Promise<OutputCommentType> {
+        const result: InsertOneResult<CommentDbType> = await commentsCollection.insertOne({...newComment})
         return commentMapper({_id: result.insertedId, ...newComment})
     },
 

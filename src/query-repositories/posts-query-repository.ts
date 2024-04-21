@@ -1,14 +1,14 @@
-import {Paginator} from "../models/blogs-models/blog-models";
-import {PostDbModel, postMapper, PostViewModel} from "../models/posts-models/posts-models";
 import {postsCollection} from "../db/db";
 import {ObjectId, WithId} from "mongodb";
+import {Paginator} from "../input-output-types/blogs-types";
+import {OutputPostType, PostDbType, postMapper} from "../input-output-types/posts-types";
 
 export const postsQueryRepository = {
 
     async findPosts(page: number,
                     pageSize: number,
                     sortBy: string,
-                    sortDirection: string): Promise<Paginator<PostViewModel>> {
+                    sortDirection: string): Promise<Paginator<OutputPostType>> {
 
         let sortOptions: { [key: string]: 1 | -1}  = {
             [sortBy]: -1
@@ -35,9 +35,9 @@ export const postsQueryRepository = {
         }
     },
 
-    async findPostById(id: string): Promise<PostViewModel | null> {
+    async findPostById(id: string): Promise<OutputPostType | null> {
         if (!ObjectId.isValid(id)) return null
-        const post: WithId<PostDbModel> | null = await postsCollection.findOne({_id: new ObjectId(id)})
+        const post: WithId<PostDbType> | null = await postsCollection.findOne({_id: new ObjectId(id)})
         return post ? postMapper(post) : null
     },
 

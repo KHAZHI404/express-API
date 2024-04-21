@@ -1,12 +1,12 @@
-import {BlogDbModel, BlogViewModel, CreateBlogInputModel, UpdateBlogModel} from "../models/blogs-models/blog-models";
 import {blogsRepository} from "../repositories/blogs-repository";
+import {BlogDbType, InputBlogType, OutputBlogType} from "../input-output-types/blogs-types";
 
 
 export const blogsService = {
 
-    async createBlog(body: CreateBlogInputModel): Promise<BlogViewModel> {
+    async createBlog(body: InputBlogType): Promise<OutputBlogType> {
 
-        const newBlog: BlogDbModel = {
+        const newBlog: BlogDbType = {
             name: body.name,
             description: body.description,
             websiteUrl: body.websiteUrl,
@@ -16,7 +16,7 @@ export const blogsService = {
         return blogsRepository.createBlog(newBlog)
     },
 
-    async updateBlog(id: string, body: UpdateBlogModel): Promise<boolean> {
+    async updateBlog(id: string, body: InputBlogType): Promise<boolean> {
         return await blogsRepository.updateBlog(id, body)
     },
 

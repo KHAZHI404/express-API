@@ -1,6 +1,6 @@
 import {WithId} from "mongodb";
 
-export type PostDbModel = {
+export type PostDbType = {
     title: string
     shortDescription: string
     content: string
@@ -8,20 +8,15 @@ export type PostDbModel = {
     blogName: string
     createdAt: string
 }
-export type CreatePostInputModel = {
-    title: string
-    shortDescription: string
-    content: string
-    blogId: string
-}
-export type UpdatePostModel = {
+export type InputPostType = {
     title: string
     shortDescription: string
     content: string
     blogId: string
 }
 
-export type PostViewModel = {
+
+export type OutputPostType = {
     id: string
     title: string
     shortDescription: string
@@ -38,7 +33,7 @@ export type Paginator<PostViewModel> = {
     items: PostViewModel[]
 }
 
-export const postMapper = (post: WithId<PostDbModel>): PostViewModel => {
+export const postMapper = (post: WithId<PostDbType>): OutputPostType => {
     return {
         id: post._id.toString(),
         title: post.title,
