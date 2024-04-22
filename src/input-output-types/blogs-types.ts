@@ -41,3 +41,6 @@ export const blogMapper = (blog: WithId<BlogDbType>): OutputBlogType => {
         isMembership: blog.isMembership,
     }
 }
+
+export class inputBlogType {
+}

@@ -69,8 +69,12 @@ describe('test for /posts', () => {
         const {createdPostManager} = await postsTestManager.createPost(data, HTTP_STATUSES.CREATED_201)
         createdPost = createdPostManager
 
+        // const buff2 = Buffer.from(ADMIN_AUTH, 'utf8')
+        // const codedAuth = buff2.toString('base64')
+
         const res = await req
             .get(SETTINGS.PATH.POSTS)
+            // .set({'Authorization': 'Basic ' + codedAuth})
             expect(res.body).toEqual({
                 pagesCount: expect.any(Number),
                 page: expect.any(Number),

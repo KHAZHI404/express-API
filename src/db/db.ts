@@ -5,33 +5,36 @@ import {PostDbType} from "../input-output-types/posts-types";
 import {UserDbType} from "../input-output-types/users-types";
 import {CommentDbType} from "../input-output-types/comments-types";
 import {TokenDbType} from "../middlewares/token-validation";
+import {SETTINGS} from "../setting";
 
 config()
 
-const url = process.env.MONGO_URL as string
+// const url = process.env.MONGO_URL as string
+//
+// if (!url) {
+//     console.error('URI-строка подключения к MongoDB не определена.');
+//     process.exit(1);
+//   }
 
-if (!url) {
-    console.error('URI-строка подключения к MongoDB не определена.');
-    process.exit(1);
-  }
-
-const client = new MongoClient(url);
-
-
-const mongoDb = client.db('social-network')
-export const blogsCollection = mongoDb.collection<BlogDbType>('blogs')
-export const postsCollection = mongoDb.collection<PostDbType>('posts')
-export const usersCollection = mongoDb.collection<UserDbType>('users')
-export const commentsCollection = mongoDb.collection<CommentDbType>('comments')
-export const blacklistTokens = mongoDb.collection<TokenDbType>('tokens')
+const client = new MongoClient(SETTINGS.MONGO_URI);
 
 
-export async function runDb () {
+export const mongoDb = client.db(SETTINGS.DB_NAME)
+export const blogsCollection = mongoDb.collection<BlogDbType>(SETTINGS.BLOG_COLLECTION_NAME)
+export const postsCollection = mongoDb.collection<PostDbType>(SETTINGS.POST_COLLECTION_NAME)
+export const usersCollection = mongoDb.collection<UserDbType>(SETTINGS.USER_COLLECTION_NAME)
+export const commentsCollection = mongoDb.collection<CommentDbType>(SETTINGS.COMMENT_COLLECTION_NAME)
+export const blacklistTokens = mongoDb.collection<TokenDbType>(SETTINGS.TOKEN_COLLECTION_NAME)
+
+
+export async function connectToDB () {
     try {
         await client.connect()
-        console.log('Connected successfully to mongoserver')
+        console.log('Connected successfully to db')
+        return true
     } catch (e) {
         console.log(`Don't connected`)
         await client.close()
+        return false
     }
 }

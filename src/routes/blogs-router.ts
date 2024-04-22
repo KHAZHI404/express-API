@@ -1,10 +1,10 @@
-import {Request, Response, Router} from "express";
+import  {Request, Response, Router} from "express";
 import {HTTP_STATUSES} from "../setting";
 import {inputCheckErrorsMiddleware} from '../middlewares/input-validation-middleware'
 import {blogsService} from "../domain/blogs-service";
 import {postsService} from "../domain/posts-service";
 import {blogsQueryRepository} from "../query-repositories/blogs-query-repository";
-import {validateBlogs, validatePostsInBlog} from "../models/blogs-models/blog-validate";
+import {blogInputValidators, validatePostsInBlog} from "../models/blogs-models/blog-validate";
 import {basicAuth} from "../middlewares/auth-middleware";
 import {getPageOptions} from "../types/types";
 import {OutputBlogType, Paginator} from "../input-output-types/blogs-types";
@@ -46,7 +46,7 @@ blogsRouter.get('/:blogId/posts',
 
 blogsRouter.post('/',
     basicAuth,
-    validateBlogs(),
+    blogInputValidators(),
     inputCheckErrorsMiddleware,
     async (req: Request, res: Response): Promise<void> => {
         const newBlog = await blogsService.createBlog(req.body)
@@ -68,7 +68,7 @@ blogsRouter.post('/:blogId/posts',
 
 blogsRouter.put('/:blogId',
     basicAuth,
-    validateBlogs(),
+    blogInputValidators(),
     inputCheckErrorsMiddleware,
     async (req: Request, res: Response): Promise<void> => {
         const blogId = req.params.blogId

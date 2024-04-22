@@ -4,6 +4,21 @@ import {HTTP_STATUSES, SETTINGS} from "../src/setting";
 import {inputBlogType} from "../src/input-output-types/blogs-types";
 // @ts-ignore
 import {blogsTestManager} from "./blogsTestManager";
+// ...
+
+// // база данных для тестов
+// import { MongoMemoryServer } from 'mongodb-memory-server'
+//
+// // запуск виртуального сервера с временной бд
+// const server = await MongoMemoryServer.create()
+//
+// const uri = server.getUri()
+// const client: MongoClient = new MongoClient(uri)
+//
+// // ...
+//
+// // остановка виртуально сервера с бд после выполнения тестов
+// await server.stop()
 
 describe('test for /blogs', () => {
     beforeAll(async () => {

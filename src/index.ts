@@ -1,10 +1,10 @@
-import {runDb} from "./db/db";
+import {connectToDB} from "./db/db";
 import {app} from "./app";
 import {SETTINGS} from "./setting";
 
 
 const startApp = async () => {
-    await runDb()
+    await connectToDB()
     app.listen(SETTINGS.PORT, () => {
         console.log('...server started')
     })

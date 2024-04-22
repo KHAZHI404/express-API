@@ -2,6 +2,12 @@ export const SETTINGS = {
     PORT: process.env.PORT || 3003,
     MONGO_URI: process.env.MONGO_URL || "mongodb://0.0.0.0:27017/?maxPoolSize=20&w=majority",
     JWT_SECRET: process.env.JWT_SECRET || "123",
+    BLOG_COLLECTION_NAME: 'blogs',
+    POST_COLLECTION_NAME: 'posts',
+    USER_COLLECTION_NAME: 'users',
+    COMMENT_COLLECTION_NAME: 'comments',
+    TOKEN_COLLECTION_NAME: 'tokens',
+    DB_NAME: 'social-network',
     PATH: {
         BLOGS: '/blogs',
         POSTS: '/posts',

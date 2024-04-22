@@ -2,7 +2,7 @@ import {body} from "express-validator";
 
 const websiteUrlPattern= 'https:\/\/([a-zA-Z0-9-]+\.)+[a-zA-Z0-9-]+(\/[a-zA-Z0-9_-]+)*\/?$'
 
-export const validateBlogs = () => [
+export const blogInputValidators = () => [
     body('name')
         .isString()
         .trim()

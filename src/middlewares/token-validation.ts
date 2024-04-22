@@ -1,6 +1,6 @@
 import { body } from "express-validator";
 import { usersRepository } from "../repositories/users-repository";
-import { inputValidationMiddleware } from "./input-validation-middleware";
+import {  } from "./input-validation-middleware";
 
 export const alreadyConfirm = body('code').custom(async (code) => {
         const userByCode = await usersRepository.findUserByConfirmationCode(code);
