@@ -3,7 +3,7 @@ import {InsertOneResult, ObjectId} from "mongodb";
 import {InputPostType, OutputPostType, PostDbType, postMapper} from "../input-output-types/posts-types";
 
 
-export const postRepository = {
+export const postsRepository = {
 
     async createPost(newPost: PostDbType): Promise<OutputPostType> {
         const result: InsertOneResult<PostDbType> = await postsCollection.insertOne({...newPost})

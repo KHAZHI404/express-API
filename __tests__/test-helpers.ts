@@ -2,15 +2,15 @@ import {app} from '../src/app'
 import {agent} from 'supertest'
 export const req = agent(app)
 import {HTTP_STATUSES, SETTINGS} from "../src/setting";
-import {inputBlogType} from "../src/input-output-types/blogs-types";
 import {InputPostType} from "../src/input-output-types/posts-types";
+import {InputBlogType} from "../src/input-output-types/blogs-types";
 
 
 type HttpKeys = keyof typeof HTTP_STATUSES
 type HttpStatusType = (typeof HTTP_STATUSES)[HttpKeys];
 
 export const blogsTestManager = {
-    async createBlog(data: inputBlogType, expectedStatus: HttpStatusType) {
+    async createBlog(data: InputBlogType, expectedStatus: HttpStatusType) {
 
         const responce = await req
             .post(SETTINGS.PATH.BLOGS)

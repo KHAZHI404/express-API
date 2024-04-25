@@ -19,7 +19,7 @@ export const verifyTokenInBody = async (req: Request, res: Response, next: NextF
             return res.status(HTTP_STATUSES.NOT_AUTHORIZED_401);
           }
       
-          next();
+          return next();
         } catch (error) {
           return res.status(HTTP_STATUSES.NOT_AUTHORIZED_401)
         }

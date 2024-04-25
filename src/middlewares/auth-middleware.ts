@@ -6,7 +6,6 @@ import {userService} from "../domain/user-service";
 import {OutputUserType} from "../input-output-types/users-types";
 
 
-// @ts-ignore
 export const basicAuth = (req: Request, res: Response, next: NextFunction) => {
     let authHeader = req.headers.authorization
     if (!authHeader) {
@@ -18,7 +17,7 @@ export const basicAuth = (req: Request, res: Response, next: NextFunction) => {
     const decodedToken = Buffer.from(authValue, "base64").toString()
     const [login, password] = decodedToken.split(":")
     if (login !== 'admin' || password !== 'qwerty') return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
-    next()
+    return next()
 }
 
 export const bearerAuth = async (req: Request, res: Response, next: NextFunction) => {

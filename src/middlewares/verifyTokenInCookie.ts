@@ -26,7 +26,7 @@ export const verifyTokenInCookie = async (req: Request, res: Response, next: Nex
       return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401);
     }
     
-    next();
+    return next();
 
   } catch (error) {
     return res.status(HTTP_STATUSES.NOT_AUTHORIZED_401)

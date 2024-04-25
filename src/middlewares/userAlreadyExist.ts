@@ -1,7 +1,7 @@
 import {body} from "express-validator";
 import {usersRepository} from "../repositories/users-repository";
-import {inputValidationMiddleware} from "./input-validation-middleware";
 import {UserDbType} from "../input-output-types/users-types";
+import {inputCheckErrorsMiddleware} from "./input-validation-middleware";
 
 export const uniqueEmailValidator = body('email').custom(async (body) => {
     const userByEmail: UserDbType | null = await usersRepository.findByLoginOrEmail(body);
@@ -54,5 +54,5 @@ export const passwordValidation = body('password')
     .isLength({min: 6, max:20})
     .withMessage('incorrect password');
 
-export const authRegistrationValidation = () => [uniqueEmailValidator, uniqueLoginValidator, loginValidation, emailValidation, passwordValidation, inputValidationMiddleware];
-export const emailResendingValidation = () => [emailExist, emailConfirmed, emailValidation, inputValidationMiddleware];
+export const authRegistrationValidation = () => [uniqueEmailValidator, uniqueLoginValidator, loginValidation, emailValidation, passwordValidation, inputCheckErrorsMiddleware];
+export const emailResendingValidation = () => [emailExist, emailConfirmed, emailValidation, inputCheckErrorsMiddleware];

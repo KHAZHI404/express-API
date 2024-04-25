@@ -1,12 +1,7 @@
-// @ts-ignore
-import {req} from './test-helpers'
+import {blogsTestManager, postsTestManager, req} from './test-helpers'
 import {HTTP_STATUSES, SETTINGS,} from "../src/setting";
-// @ts-ignore
-import {blogsTestManager} from "/test-helpers";
-// @ts-ignore
-import {postsTestManager} from "/test-helpers";
 import {InputPostType} from "../src/input-output-types/posts-types";
-import {inputBlogType} from "../src/input-output-types/blogs-types";
+import {InputBlogType} from "../src/input-output-types/blogs-types";
 
 
 
@@ -52,7 +47,7 @@ describe('test for /posts', () => {
 
     let createdPost: any = null;
     it('should create post with correct input data', async () => {
-        const blogExist: inputBlogType = {
+        const blogExist: InputBlogType = {
             name: 'Title name',
             description: 'description test',
             websiteUrl: 'https://website.com'

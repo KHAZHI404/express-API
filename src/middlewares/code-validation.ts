@@ -1,6 +1,6 @@
 import { body } from "express-validator";
 import { usersRepository } from "../repositories/users-repository";
-import { inputValidationMiddleware } from "./input-validation-middleware";
+import { inputCheckErrorsMiddleware } from "./input-validation-middleware";
 
 export const alreadyConfirm = body('code').custom(async (code) => {
         const userByCode = await usersRepository.findUserByConfirmationCode(code);
@@ -25,4 +25,4 @@ export const codeValidation = body('code')
         .withMessage('errors in code');
 
 
-        export const confirmationValidation = () => [codeDoesntExist, alreadyConfirm, codeValidation, inputValidationMiddleware];
+        export const confirmationValidation = () => [codeDoesntExist, alreadyConfirm, codeValidation, inputCheckErrorsMiddleware];

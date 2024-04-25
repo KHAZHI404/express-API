@@ -10,7 +10,6 @@ import {SETTINGS} from "../setting";
 config()
 
 // const url = process.env.MONGO_URL as string
-//
 // if (!url) {
 //     console.error('URI-строка подключения к MongoDB не определена.');
 //     process.exit(1);
@@ -27,13 +26,13 @@ export const commentsCollection = mongoDb.collection<CommentDbType>(SETTINGS.COM
 export const blacklistTokens = mongoDb.collection<TokenDbType>(SETTINGS.TOKEN_COLLECTION_NAME)
 
 
-export async function connectToDB () {
+export const connectToDB = async () => {
     try {
         await client.connect()
-        console.log('Connected successfully to db')
+        console.log('connected to db')
         return true
     } catch (e) {
-        console.log(`Don't connected`)
+        console.log(e)
         await client.close()
         return false
     }

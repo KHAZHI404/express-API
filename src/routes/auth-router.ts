@@ -103,8 +103,8 @@ authRouter.get('/me' ,
     async (req: Request, res: Response) => {
     const userId = req.user!.id
         const currentUser = await usersQueryRepository.findCurrentUser(userId)
-        if (!currentUser) return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-        res.send({
+        if (!currentUser)  {return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)}
+        return res.send({
             email: currentUser.email,
             login: currentUser.login,
             userId: currentUser.id

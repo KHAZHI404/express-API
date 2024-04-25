@@ -19,6 +19,9 @@ blogsRouter.get('/',
     const foundBlogs: Paginator<OutputBlogType> = await blogsQueryRepository.findBlogs(pageNumber, pageSize,
          sortBy, sortDirection, searchNameTerm)
     res.send(foundBlogs)
+
+        //завернуть все в функцию и здесь вызывать эту функцию
+
 })
 
 blogsRouter.get('/:blogId',

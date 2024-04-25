@@ -7,14 +7,18 @@ export const ownerMiddlevare = async (req: Request, res: Response, next: NextFun
     const commentId = req.params.commentId
     const comment = await commentsQueryRepository.getCommentById(commentId)
 
-    if (!comment) return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+    if (!comment) {
+        return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+    }
 
     if (comment?.commentatorInfo.userId !== req.user?.id) {
         return res.sendStatus(403)
     }
+
     if (comment?.commentatorInfo.userLogin !== req.user?.login) {
 
         return res.sendStatus(403)
     }
-    next()
+
+    return next();
 }

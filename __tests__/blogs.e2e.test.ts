@@ -1,9 +1,6 @@
-// @ts-ignore
-import {req} from './test-helpers'
+import {blogsTestManager, req} from './test-helpers'
 import {HTTP_STATUSES, SETTINGS} from "../src/setting";
-import {inputBlogType} from "../src/input-output-types/blogs-types";
-// @ts-ignore
-import {blogsTestManager} from "./blogsTestManager";
+import {InputBlogType} from "../src/input-output-types/blogs-types";
 // ...
 
 // // база данных для тестов
@@ -45,7 +42,7 @@ describe('test for /blogs', () => {
     });
 
     it(`shouldn't create blog with incorrect input data`, async () => {
-        const data: inputBlogType = {
+        const data: InputBlogType = {
             name: 'Title name',
             description: 'description test',
             websiteUrl: ''
@@ -61,7 +58,7 @@ describe('test for /blogs', () => {
 
     let createdBlog: any = null;
     it('should create blog with correct input data', async () => {
-        const data: inputBlogType = {
+        const data: InputBlogType = {
             name: 'Title name',
             description: 'description test',
             websiteUrl: 'https://website.com'
@@ -82,7 +79,7 @@ describe('test for /blogs', () => {
     });
 
     it(`shouldn't update blog with incorrect input data`, async () => {
-        const data: inputBlogType = {
+        const data: InputBlogType = {
             name: '',
             description: 'Author test',
             websiteUrl: 'https://website.com'
@@ -102,7 +99,7 @@ describe('test for /blogs', () => {
     });
 
     it('shouldnt update blog that not exist', async () => {
-            const data: inputBlogType = {
+            const data: InputBlogType = {
                 name: 'Title test',
                 description: 'Author test',
                 websiteUrl: 'https://website.com'
@@ -116,7 +113,7 @@ describe('test for /blogs', () => {
         });
 
     it(`shouldn update blog with correct input data`, async () => {
-                const data: inputBlogType = {
+                const data: InputBlogType = {
                     name: 'Title test',
                     description: 'Author test',
                     websiteUrl: 'https://website.com'

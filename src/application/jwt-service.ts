@@ -1,12 +1,11 @@
-// @ts-ignore
-import {UserDbModel} from "../input-output-types/users-types";
+import {UserDbType} from "../input-output-types/users-types";
 import {ObjectId, WithId} from "mongodb";
 import {SETTINGS} from "../setting";
 import jwt from 'jsonwebtoken';
 
 export const jwtService =
     {
-    async createJWT(user: WithId<UserDbModel>) {
+    async createJWT(user: WithId<UserDbType>) {
         const token = jwt.sign({userId: user._id}, SETTINGS.JWT_SECRET, {expiresIn: '2h'})
         return token
     },
